@@ -1,10 +1,10 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-export default function Onboarding() {
+export default function Temp() {
     return (
         <View>
-            <Text>Onboarding</Text>
+            <Text>Temp</Text>
         </View>
     )
 }
