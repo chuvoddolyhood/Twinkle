@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ChildComponent from "./Context";
+import LoginScreen from "./LoginScreen";
 
 export const ExampleContext = React.createContext();
 
@@ -14,7 +15,7 @@ const App = () => {
                 setUser: setUser
             }}
         >
-            <ChildComponent />
+            <LoginScreen />
         </ExampleContext.Provider>
     );
 };

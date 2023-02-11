@@ -1,7 +1,6 @@
 import { View, Text, KeyboardAvoidingView, Keyboard, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import LottieView from 'lottie-react-native';
-
 import AuthenticateStyle from './Authenticate.style'
 import assets from '../../assets/img';
 import FontStyle from '../../assets/font';
@@ -9,6 +8,7 @@ import Input from './Input';
 import Button from './Button';
 import { faKey, faUser } from '@fortawesome/free-solid-svg-icons';
 import { isValidEmailPhone, isValidPassword } from '../../assets/Validation';
+import { AuthContext } from '../routes/AuthProvider';
 
 export default function LoginScreen({ navigation }) {
     const [keyboardShowed, setKeyboardShowed] = useState(true)
@@ -16,6 +16,8 @@ export default function LoginScreen({ navigation }) {
     const [password, setPassword] = useState('')
     const [errorUsername, setErrorUsername] = useState('')
     const [errorPassword, setErrorPassword] = useState('')
+
+    const { signIn } = useContext(AuthContext);
 
     useEffect(() => {
         Keyboard.addListener('keyboardDidShow', () => {
@@ -29,7 +31,8 @@ export default function LoginScreen({ navigation }) {
     const onPress = () => {
         setErrorUsername((!isValidEmailPhone(username)) ? 'Email or Phone number is not correct.' : '');
         setErrorPassword(!isValidPassword(password) ? 'Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters.' : '');
-        if (isValidationOK()) alert(username + password)
+        if (isValidationOK())
+            signIn(username, password)
     }
 
     const onChangeText_Username = (text) => setUsername(text)
@@ -68,7 +71,7 @@ export default function LoginScreen({ navigation }) {
                     <Button onPress={onPress} />
                     <View style={AuthenticateStyle.belowButton}>
                         <Text>Don't have an account? </Text>
-                        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                        <TouchableOpacity onPress={() => navigation.replace('Register')}>
                             <Text style={AuthenticateStyle.signupText} >Sign up here</Text>
                         </TouchableOpacity>
                     </View>

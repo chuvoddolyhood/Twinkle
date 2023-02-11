@@ -1,5 +1,5 @@
 import { View, Text, KeyboardAvoidingView, Keyboard, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import LottieView from 'lottie-react-native';
 
 import AuthenticateStyle from './Authenticate.style'
@@ -9,6 +9,7 @@ import Input from './Input';
 import Button from './Button';
 import { faCircleUser, faKey, faUser } from '@fortawesome/free-solid-svg-icons';
 import { isValidEmailPhone, isValidName, isValidPassword, isValidRePassword } from '../../assets/Validation';
+import { AuthContext } from '../routes/AuthProvider';
 
 export default function RegisterScreen({ navigation }) {
     const [keyboardShowed, setKeyboardShowed] = useState(true)
@@ -20,6 +21,8 @@ export default function RegisterScreen({ navigation }) {
     const [errorUsername, setErrorUsername] = useState('')
     const [errorPassword, setErrorPassword] = useState('')
     const [errorRePassword, setErrorRePassword] = useState('')
+
+    const { signUp } = useContext(AuthContext)
 
     useEffect(() => {
         Keyboard.addListener('keyboardDidShow', () => {
@@ -44,7 +47,7 @@ export default function RegisterScreen({ navigation }) {
         setErrorRePassword(!isValidRePassword(password, rePassword) ? "Password didn't match." : '');
 
         if (isValidationOK())
-            alert(name + username + password)
+            signUp(username, password)
     }
 
     return (

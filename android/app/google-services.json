@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "69316311444",
+    "project_id": "twinkle-e2561",
+    "storage_bucket": "twinkle-e2561.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69316311444:android:91a49552a39e3877a33781",
+        "android_client_info": {
+          "package_name": "com.twinkle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "69316311444-5o59qn2d3lt7r7c9bc7fgavgcddbcglb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJ4zY9G8KhF5hnOEsDDYzUPfnVw6Y_e00"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69316311444-5o59qn2d3lt7r7c9bc7fgavgcddbcglb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
