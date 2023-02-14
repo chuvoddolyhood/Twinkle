@@ -9,6 +9,8 @@ import AppStack from './AppStack'
 import OnboardingScreen from '../onboarding/OnboardingScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthStack from './AuthStack';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+
 
 /**
  * 
@@ -33,7 +35,11 @@ const Routes = () => {
             } else {
                 setInitializing(false)
             }
-        })
+        });
+
+        GoogleSignin.configure({
+            webClientId: '69316311444-lmifl2gl7ceic1rn2ifhrnuknha70v9t.apps.googleusercontent.com',
+        });
     }, [])
 
 

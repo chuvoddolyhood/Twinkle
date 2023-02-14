@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "69316311444-5o59qn2d3lt7r7c9bc7fgavgcddbcglb.apps.googleusercontent.com",
+          "client_id": "69316311444-bvr0g464ravenhe22reght4fs0n1dkii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.twinkle",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "69316311444-lmifl2gl7ceic1rn2ifhrnuknha70v9t.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

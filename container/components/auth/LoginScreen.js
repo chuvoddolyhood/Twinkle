@@ -17,7 +17,7 @@ export default function LoginScreen({ navigation }) {
     const [errorUsername, setErrorUsername] = useState('')
     const [errorPassword, setErrorPassword] = useState('')
 
-    const { signIn } = useContext(AuthContext);
+    const { signIn, googleLogin } = useContext(AuthContext);
 
     useEffect(() => {
         Keyboard.addListener('keyboardDidShow', () => {
@@ -68,13 +68,15 @@ export default function LoginScreen({ navigation }) {
                         onChangeText={onChangeText_Password}
                     />
                     <Text style={{ color: 'red', marginBottom: 5 }}>{errorPassword}</Text>
-                    <Button onPress={onPress} />
+                    <Button onPress={onPress} title="Next" />
                     <View style={AuthenticateStyle.belowButton}>
                         <Text>Don't have an account? </Text>
                         <TouchableOpacity onPress={() => navigation.replace('Register')}>
                             <Text style={AuthenticateStyle.signupText} >Sign up here</Text>
                         </TouchableOpacity>
                     </View>
+                    <Button title="Sign in with Facebook" />
+                    <Button onPress={googleLogin} title="Sign in with Google" />
                 </View>
             </View>
         </KeyboardAvoidingView>

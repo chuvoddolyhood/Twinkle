@@ -1,7 +1,7 @@
 import React, { createContext, useState } from 'react'
 import auth from '@react-native-firebase/auth'
 import Routes from './Routes';
-import LoginScreen from '../auth/LoginScreen';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 //create context so that sharing state in which component that you want to share it
 export const AuthContext = createContext();
@@ -47,6 +47,16 @@ const AuthProvider = () => {
                 logOut: async () => {
                     try {
                         await auth().signOut().then(() => console.log('User signed out!'));;
+                    } catch (error) {
+                        console.log(error);
+                    }
+                },
+                googleLogin: async () => {
+                    try {
+                        const { idToken } = await GoogleSignin.signIn();
+                        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+                        await auth().signInWithCredential(googleCredential);
                     } catch (error) {
                         console.log(error);
                     }

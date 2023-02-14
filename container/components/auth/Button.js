@@ -3,13 +3,15 @@ import React from 'react'
 import colors from '../../assets/colors';
 import FontStyle from '../../assets/font';
 
-export default function Button({ onPress }) {
+export default function Button(props) {
+    const { onPress, title } = props
+
     return (
         <TouchableOpacity
             style={styles.container}
             onPress={onPress}
         >
-            <Text style={[FontStyle.textButton, styles.text]}>Next</Text>
+            <Text style={[FontStyle.textButton, styles.text]}>{title}</Text>
         </TouchableOpacity>
     )
 }

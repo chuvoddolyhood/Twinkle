@@ -91,7 +91,7 @@ export default function RegisterScreen({ navigation }) {
                         onChangeText={onChangeText_RePassword}
                     />
                     <Text style={{ color: 'red', marginBottom: 5 }}>{errorRePassword}</Text>
-                    <Button onPress={onPress} />
+                    <Button onPress={onPress} title="Next" />
                     <View style={AuthenticateStyle.belowButton}>
                         <Text>Already have an account? </Text>
                         <TouchableOpacity onPress={() => navigation.replace('Login')}>
