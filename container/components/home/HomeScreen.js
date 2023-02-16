@@ -1,17 +1,35 @@
-import { View, Text } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import React, { useContext } from 'react'
-import Button from '../auth/Button'
+
 import { AuthContext } from '../routes/AuthProvider'
+import colors from '../../assets/colors'
+import LinearGradient from 'react-native-linear-gradient'
 
 const HomeScreen = () => {
     const { user, logOut } = useContext(AuthContext)
 
     return (
-        <View>
-            <Text>HomeScreen {user.email}</Text>
-            <Button onPress={() => logOut()}>Log out</Button>
-        </View>
+        <LinearGradient colors={[`${colors.secondColor}`, `${colors.thirdColor}`]} style={styles.container}>
+
+            <View >
+                <Text>HomeScreen</Text>
+            </View>
+        </LinearGradient>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1
+        // marginVertical: 8,
+        // backgroundColor: colors.primaryColor,
+        // paddingVertical: 18,
+        // borderRadius: 10
+    },
+    text: {
+        color: colors.whiteColor,
+        alignSelf: 'center'
+    }
+});
 
 export default HomeScreen

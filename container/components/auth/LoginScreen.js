@@ -75,7 +75,6 @@ export default function LoginScreen({ navigation }) {
                             <Text style={AuthenticateStyle.signupText} >Sign up here</Text>
                         </TouchableOpacity>
                     </View>
-                    <Button title="Sign in with Facebook" />
                     <Button onPress={googleLogin} title="Sign in with Google" />
                 </View>
             </View>

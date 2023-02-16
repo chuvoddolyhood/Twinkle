@@ -14,4 +14,5 @@ export default {
     unChooseBlue: '#704FFE',
     shareIconColor: '#E4BEA9',
     iconColor: '#ffcd8e',
+    headingColor: '#FF9366'
 }
