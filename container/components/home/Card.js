@@ -6,7 +6,7 @@ import { faComment, faHeart, faLocationDot, faShare } from '@fortawesome/free-so
 import assets from '../../assets/img';
 
 
-const Card = ({ url, location, heart }) => {
+const Card = ({ url, location, heart, uri }) => {
     const [loading, setLoading] = useState(false)
     const [height, setHeight] = useState(0);
     var imageURL = 'https://reactnative-examples.com/wp-content/uploads/2022/02/earth.jpg';
@@ -14,11 +14,11 @@ const Card = ({ url, location, heart }) => {
     var urlTemp = './../../assets/img/img-5836.jpg';
     // console.log("urlTemp", urlTemp);
 
-    var uri = 'https://tutorialscapital.com/wp-content/uploads/2017/09/background.jpg';
+    // var uri = 'https://tutorialscapital.com/wp-content/uploads/2017/09/background.jpg';
 
-    var tempURL = 'https://user-images.githubusercontent.com/10475533/108550229-47442b00-72bc-11eb-9bd8-dc9acd9f05be.png'
+    var tempURL = 'https://firebasestorage.googleapis.com/v0/b/fir-d6633.appspot.com/o/anhthe.png?alt=media&token=cce7d1d0-5e09-4af0-8140-e3f1611a51ed'
     useEffect(() => {
-        Image.getSize(tempURL, (width, height) => {
+        Image.getSize(uri, (width, height) => {
             setHeight(height);
             setLoading(true)
         }, (errorMsg) => {
@@ -59,8 +59,8 @@ const Card = ({ url, location, heart }) => {
             <View style={styles.body}>
                 <Text style={styles.caption}>New day is good day.</Text>
                 {loading && <Image
-                    source={url}
-                    // source={{ uri: "http://adomain.com/myimageurl.jpg" }}
+                    // source={url}
+                    source={{ uri: uri }}
                     resizeMode='cover'
                     style={{
                         width: '100%',

@@ -38,7 +38,7 @@ const Routes = () => {
         });
 
         GoogleSignin.configure({
-            webClientId: '69316311444-lmifl2gl7ceic1rn2ifhrnuknha70v9t.apps.googleusercontent.com',
+            webClientId: '129296219950-36cnj5ru4ijg1ofrpjpruto62rkb0ktq.apps.googleusercontent.com',
         });
     }, [])
 
