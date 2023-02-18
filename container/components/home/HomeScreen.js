@@ -20,9 +20,9 @@ const HomeScreen = () => {
 
 
             <ScrollView showsVerticalScrollIndicator={false}>
-                <Card url={assets.photo.img_1} location='Tu Duc Tomb, Hue, Vietnam' />
-                <Card url={assets.photo.img_2} location='Ancient capital of Hue, Hue, Vietnam' />
-                <Card url={assets.photo.img_3} location='Cantho City, Vietnam' />
+                <Card url={assets.photo.img_1} location='Tu Duc Tomb, Hue, Vietnam' heart={true} />
+                <Card url={assets.photo.img_2} location='Ancient capital of Hue, Hue, Vietnam' heart={false} />
+                <Card url={assets.photo.img_3} location='Cantho City, Vietnam' heart={true} />
             </ScrollView>
         </LinearGradient>
     )
@@ -32,7 +32,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 20,
-        paddingTop: 20
     },
     text: {
         color: colors.whiteColor,

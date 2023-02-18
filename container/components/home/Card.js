@@ -2,11 +2,11 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import colors from '../../assets/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faComment, faHeart, faLocation, faLocationArrow, faLocationCrosshairs, faLocationDot, faLocationPin, faLocationPinLock, faShare } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faHeart, faLocationDot, faShare } from '@fortawesome/free-solid-svg-icons';
 import assets from '../../assets/img';
 
 
-const Card = ({ url, location }) => {
+const Card = ({ url, location, heart }) => {
     const [loading, setLoading] = useState(false)
     const [height, setHeight] = useState(0);
     var imageURL = 'https://reactnative-examples.com/wp-content/uploads/2022/02/earth.jpg';
@@ -71,7 +71,7 @@ const Card = ({ url, location }) => {
             </View>
             <View style={styles.footer}>
                 <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundHeart, }]}>
-                    <FontAwesomeIcon icon={faHeart} size={20} color={colors.heartColor} style={styles.iconFunc} />
+                    <FontAwesomeIcon icon={faHeart} size={20} color={heart ? colors.heartColor : colors.textColor} style={styles.iconFunc} />
                     <Text style={styles.textFunc}>211</Text>
                 </View>
                 <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundComment, }]}>
@@ -85,7 +85,7 @@ const Card = ({ url, location }) => {
 
 const styles = StyleSheet.create({
     cardContainer: {
-        marginBottom: 40,
+        marginVertical: 20,
     },
     header: {
         flexDirection: 'row',

@@ -1,9 +1,8 @@
 import React from 'react'
-import { View, Text } from 'react-native'
 import HomeScreen from '../home/HomeScreen'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { faBell, faCamera, faHome, faKey, faMessage, faPlus, faPlusCircle, faPlusMinus, faPlusSquare, faSearch, faUser, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faCamera, faHome, faMessage, faPlus, faSearch, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import colors from '../../assets/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import ProfileScreen from '../profile/ProfileScreen';
@@ -11,6 +10,7 @@ import NotificationScreen from '../notification/NotificationScreen';
 import MessageScreen from '../messages/MessageScreen';
 import { Pressable } from "react-native";
 import SearchScreen from '../search/SearchScreen';
+import FeedStack from './Stack/FeedStack';
 
 /**
  * 
@@ -20,55 +20,6 @@ import SearchScreen from '../search/SearchScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
-const FeedStack = ({ navigation }) => (
-    <Stack.Navigator>
-        <Stack.Screen
-            name="My Feed"
-            component={HomeScreen}
-            options={{
-                headerTitleAlign: 'center',
-                headerTitleStyle: {
-                    color: colors.headingColor,
-                    fontSize: 26,
-                    fontWeight: '700'
-                },
-                headerStyle: {
-                    backgroundColor: colors.secondColor,
-                    shadowColor: '#fff',
-                    elevation: 0,
-                },
-                headerRight: () => (
-                    <Pressable
-                        onPress={() => alert('avc')}
-                        style={{
-                            backgroundColor: colors.backgroundIcon,
-                            padding: 5,
-                            borderRadius: 8,
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}
-                    >
-                        <FontAwesomeIcon icon={faPlus} size={20} color={colors.primaryColor} />
-                    </Pressable>
-                ),
-                headerLeft: () => (
-                    <Pressable
-                        onPress={() => alert('avc')}
-                        style={{
-                            backgroundColor: colors.backgroundIcon,
-                            padding: 5,
-                            borderRadius: 8,
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}>
-                        <FontAwesomeIcon icon={faCamera} size={20} color={colors.primaryColor} />
-                    </Pressable>
-                )
-            }}
-        />
-    </Stack.Navigator>
-)
 
 const SearchStack = ({ navigation }) => (
     <Stack.Navigator>
@@ -207,7 +158,7 @@ const AppStack = () => {
                     headerShown: false,
                     // tabBarVisible: route.state && route.state.index === 0,
                     tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesomeIcon icon={faHome} size={20} color={focused ? colors.primaryColor : colors.iconColor} />
+                        <FontAwesomeIcon icon={faHome} size={25} color={focused ? colors.primaryColor : colors.iconColor} />
                     ),
                 })}
 
@@ -221,7 +172,7 @@ const AppStack = () => {
                     headerShown: false,
                     // tabBarVisible: route.state && route.state.index === 0,
                     tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesomeIcon icon={faSearch} size={20} color={focused ? colors.primaryColor : colors.iconColor} />
+                        <FontAwesomeIcon icon={faSearch} size={25} color={focused ? colors.primaryColor : colors.iconColor} />
                     ),
                 })}
 
@@ -235,7 +186,7 @@ const AppStack = () => {
                     headerShown: false,
                     // tabBarVisible: route.state && route.state.index === 0,
                     tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesomeIcon icon={faMessage} size={20} color={focused ? colors.primaryColor : colors.iconColor} />
+                        <FontAwesomeIcon icon={faMessage} size={25} color={focused ? colors.primaryColor : colors.iconColor} />
                     ),
                 })}
             />
@@ -248,7 +199,7 @@ const AppStack = () => {
                     headerShown: false,
                     // tabBarVisible: route.state && route.state.index === 0,
                     tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesomeIcon icon={faBell} size={20} color={focused ? colors.primaryColor : colors.iconColor} />
+                        <FontAwesomeIcon icon={faBell} size={25} color={focused ? colors.primaryColor : colors.iconColor} />
                     ),
                 })}
             />
@@ -261,7 +212,7 @@ const AppStack = () => {
                     headerShown: false,
                     // tabBarVisible: route.state && route.state.index === 0,
                     tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesomeIcon icon={faUserCircle} size={20} color={focused ? colors.primaryColor : colors.iconColor} />
+                        <FontAwesomeIcon icon={faUserCircle} size={25} color={focused ? colors.primaryColor : colors.iconColor} />
                     ),
 
                 })}
