@@ -10,5 +10,10 @@ const assets = {
         img_8: require('./login-orange.json'),
         img_9: require('./unauthenticated.json'),
     },
+    photo: {
+        img_1: require('./img-5836.jpg'),
+        img_2: require('./beauty_1668910746321.jpg'),
+        img_3: require('./anhthe.png'),
+    }
 };
 export default assets;
