@@ -15,5 +15,9 @@ export default {
     unChooseBlue: '#704FFE',
     shareIconColor: '#E4BEA9',
     iconColor: '#ffcd8e',
-    headingColor: '#FF9366'
+    headingColor: '#FF9366',
+    mapIcon: '#F5533D',
+    imageIcon: '#45BD62',
+    cameraIcon: '#F7B928',
+    tagIcon: '#1877F2',
 }

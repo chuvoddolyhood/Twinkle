@@ -6,12 +6,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import colors from '../../../assets/colors';
 import { faCamera, faPlus } from '@fortawesome/free-solid-svg-icons';
 import ImagePicker from 'react-native-image-crop-picker';
+import { useNavigation } from '@react-navigation/native';
+import PostingScreen from '../../PostingScreen/PostingScreen';
 
-const FeedStack = ({ navigation }) => {
+const FeedStack = () => {
     const Stack = createNativeStackNavigator();
 
     const [image, setImage] = useState(null);
 
+    const navigation = useNavigation();
 
     const takePhotoFromCamera = async () => {
         try {
@@ -80,7 +83,7 @@ const FeedStack = ({ navigation }) => {
                     },
                     headerRight: () => (
                         <Pressable
-                            onPress={choosePhotoFromLibrary}
+                            onPress={() => navigation.navigate('Posting')}
                             style={{
                                 backgroundColor: colors.backgroundIcon,
                                 padding: 5,
@@ -107,6 +110,12 @@ const FeedStack = ({ navigation }) => {
                     )
                 }}
             />
+            <Stack.Screen
+                name="Posting"
+                component={PostingScreen}
+                options={{ headerShown: false }}
+            >
+            </Stack.Screen>
         </Stack.Navigator>
     )
 }
