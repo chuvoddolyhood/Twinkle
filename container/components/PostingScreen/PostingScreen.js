@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { choosePhotoFromLibrary, takePhotoFromCamera } from '../expanse';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
 
 const PostingScreen = () => {
     const navigation = useNavigation();
@@ -15,22 +16,20 @@ const PostingScreen = () => {
     const [uploading, setUploading] = useState(false);
     const [transferred, setTransferred] = useState(0);
 
-    //Chua nghi ra cach toi uu
-    const choosePhotoFromLibrary = () => {
-        try {
-            ImagePicker.openPicker({
-                cropping: true,
-            }).then((image) => {
-                // console.log(image);
-                imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
-                setImage(imageUri);
-            }).catch(err => { console.log(err) });
-        } catch (error) {
-            console.log(error);
-        }
+    const chooseImage = async () => {
+        const imageUri = await choosePhotoFromLibrary();
+        // console.log('Image URL: ', imgURL);
+        setImage(imageUri);
     }
 
-    const submitPost = async () => {
+    const takePhoto = async () => {
+        const imageUri = await takePhotoFromCamera();
+        // console.log('Image URL: ', imageUri);
+        setImage(imageUri);
+    }
+
+    //Upload img to Storage
+    const uploadImg = async () => {
         const uploadUri = image;
         let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
         // Add timestamp to File Name
@@ -130,10 +129,10 @@ const PostingScreen = () => {
                     <Text style={styles.textPostVisibility}>Public</Text>
                 </View>
                 <View style={styles.entity}>
-                    <TouchableOpacity onPress={choosePhotoFromLibrary}>
+                    <TouchableOpacity onPress={chooseImage}>
                         <FontAwesomeIcon icon={faImage} size={22} color={colors.imageIcon} style={{ marginRight: 20 }} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={takePhotoFromCamera}>
+                    <TouchableOpacity onPress={takePhoto}>
                         <FontAwesomeIcon icon={faCameraRetro} size={22} color={colors.cameraIcon} style={{ marginRight: 20 }} />
                     </TouchableOpacity>
                     <TouchableOpacity>
