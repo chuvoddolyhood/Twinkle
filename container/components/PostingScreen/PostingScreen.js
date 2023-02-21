@@ -1,20 +1,23 @@
 import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, Alert, ActivityIndicator, Modal } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import colors from '../../assets/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowLeftLong, faCameraRetro, faGlobeAsia, faImage, faMapMarkerAlt, faTag } from '@fortawesome/free-solid-svg-icons';
 import assets from '../../assets/img';
 import { useNavigation } from '@react-navigation/native';
 import { choosePhotoFromLibrary, takePhotoFromCamera } from '../expanse';
-import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
+
+import { AuthContext } from '../routes/AuthProvider';
 
 const PostingScreen = () => {
     const navigation = useNavigation();
     const [image, setImage] = useState('')
+    const [caption, setCaption] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [transferred, setTransferred] = useState(0);
+    const { user } = useContext(AuthContext)
 
     const chooseImage = async () => {
         const imageUri = await choosePhotoFromLibrary();
@@ -71,6 +74,24 @@ const PostingScreen = () => {
         }
     }
 
+    const submitPost = async () => {
+        const imgURL = await uploadImg();
+        console.log(imgURL);
+
+        firestore().collection('posts').add({
+            userId: user.uid,
+            caption: caption,
+            postImg: imgURL.toString(),
+            postTime: firestore.Timestamp.fromDate(new Date()),
+            likes: null,
+            comments: null
+        }).then(() => {
+            console.log(Completed);
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -97,6 +118,7 @@ const PostingScreen = () => {
                 <TextInput
                     placeholder={"What is on your mind?"}
                     style={styles.inputPost}
+                    onChangeText={text => setCaption(text)}
                 />
                 {image && <View style={styles.containerImgPost}>
                     <Image
