@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, Alert, ActivityIndicator, Modal } from 'react-native'
 import React, { useState } from 'react'
 import colors from '../../assets/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -50,15 +50,11 @@ const PostingScreen = () => {
                 `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
             );
 
-            setTransferred(
-                Math.round(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) *
-                100,
-            );
+            setTransferred(Math.round((taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) * 100));
         });
 
         try {
             await task;
-
             const url = await storageRef.getDownloadURL();
 
             setUploading(false);
@@ -103,19 +99,30 @@ const PostingScreen = () => {
                     placeholder={"What is on your mind?"}
                     style={styles.inputPost}
                 />
-                <View style={styles.containerImgPost}>
-                    {image &&
-                        <Image
-                            source={{ uri: image }}
-                            style={{
-                                width: '100%',
-                                height: '100%',
-                                borderRadius: 10,
-                                resizeMode: 'cover',
-                                marginRight: 10
-                            }}
-                        />}
-                </View>
+                {image && <View style={styles.containerImgPost}>
+                    <Image
+                        source={{ uri: image }}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: 10,
+                            resizeMode: 'cover',
+                            marginRight: 10
+                        }}
+                    />
+                </View>}
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={uploading}
+                >
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ width: 200, height: 150, backgroundColor: colors.secondColor, borderRadius: 20, elevation: 8, justifyContent: 'center', alignItems: 'center' }}>
+                            <ActivityIndicator size='large' color={colors.primaryColor} animating />
+                            <Text>{transferred}% Completed</Text>
+                        </View>
+                    </View>
+                </Modal>
             </View>
             <View style={styles.footer}>
                 <View style={styles.postVisibility}>

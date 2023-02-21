@@ -1,19 +1,40 @@
+import { useState } from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
 
-function choosePhotoFromLibrary() {
-    var imageUri;
+async function choosePhotoFromLibrary() {
+    var imageUri = ''
+
     try {
-        ImagePicker.openPicker({
+        await ImagePicker.openPicker({
             cropping: true,
         }).then((image) => {
             // console.log(image);
             imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
             // setImage(imageUri);
-            // console.log(imageUri);
         }).catch(err => { console.log(err) });
     } catch (error) {
         console.log(error);
     }
+
+    // console.log(imageUri);
+    return imageUri;
+
+
+
+    // try {
+    //     return new Promise(resolve => {
+    //         ImagePicker.openPicker({
+    //             cropping: true,
+    //         }).then((image) => {
+    //             imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+    //             resolve(imageUri)
+    //         })
+    //     })
+    // } catch (error) {
+    //     console.log(error);
+    // }
+
+    // console.log(imageUri);
 }
 
 export default choosePhotoFromLibrary
