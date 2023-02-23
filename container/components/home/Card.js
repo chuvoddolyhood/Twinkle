@@ -3,22 +3,16 @@ import React, { useState, useEffect } from 'react'
 import colors from '../../assets/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faComment, faHeart, faLocationDot, faShare } from '@fortawesome/free-solid-svg-icons';
-import assets from '../../assets/img';
+import moment from 'moment';
 
+const Card = (props) => {
+    const { id, caption, comments, likes, postImg, postTime, userId } = props.items
 
-const Card = ({ url, location, heart, uri }) => {
     const [loading, setLoading] = useState(false)
     const [height, setHeight] = useState(0);
-    var imageURL = 'https://reactnative-examples.com/wp-content/uploads/2022/02/earth.jpg';
 
-    var urlTemp = './../../assets/img/img-5836.jpg';
-    // console.log("urlTemp", urlTemp);
-
-    // var uri = 'https://tutorialscapital.com/wp-content/uploads/2017/09/background.jpg';
-
-    var tempURL = 'https://firebasestorage.googleapis.com/v0/b/fir-d6633.appspot.com/o/anhthe.png?alt=media&token=cce7d1d0-5e09-4af0-8140-e3f1611a51ed'
     useEffect(() => {
-        Image.getSize(uri, (width, height) => {
+        Image.getSize(postImg, (width, height) => {
             setHeight(height);
             setLoading(true)
         }, (errorMsg) => {
@@ -26,7 +20,7 @@ const Card = ({ url, location, heart, uri }) => {
         });
     }, [])
 
-    console.log(height);
+    // console.log(postTime.toDate().toString());
 
     return (
         <View style={styles.cardContainer}>
@@ -48,7 +42,7 @@ const Card = ({ url, location, heart, uri }) => {
                             <View style={styles.containerLocationTime}>
                                 <FontAwesomeIcon icon={faLocationDot} size={12} color={colors.iconColor} />
                             </View>
-                            <Text style={styles.textLocationTime}>{location}   •   2m ago</Text>
+                            <Text style={styles.textLocationTime}>{'HCMC'}   •   {moment(postTime.toDate()).fromNow()}</Text>
                         </View>
                     </View>
                 </View>
@@ -57,21 +51,20 @@ const Card = ({ url, location, heart, uri }) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.body}>
-                <Text style={styles.caption}>New day is good day.</Text>
+                <Text style={styles.caption}>{caption} {id}</Text>
                 {loading && <Image
-                    // source={url}
-                    source={{ uri: uri }}
+                    source={{ uri: postImg }}
                     resizeMode='cover'
                     style={{
                         width: '100%',
-                        height: height / 4,
+                        height: height / 6,
                         borderRadius: 15
                     }}
                 />}
             </View>
             <View style={styles.footer}>
                 <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundHeart, }]}>
-                    <FontAwesomeIcon icon={faHeart} size={20} color={heart ? colors.heartColor : colors.textColor} style={styles.iconFunc} />
+                    <FontAwesomeIcon icon={faHeart} size={20} color={true ? colors.heartColor : colors.textColor} style={styles.iconFunc} />
                     <Text style={styles.textFunc}>211</Text>
                 </View>
                 <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundComment, }]}>

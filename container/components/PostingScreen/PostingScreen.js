@@ -33,6 +33,9 @@ const PostingScreen = () => {
 
     //Upload img to Storage
     const uploadImg = async () => {
+        if (image === null) {
+            return null
+        }
         const uploadUri = image;
         let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
         // Add timestamp to File Name
@@ -62,10 +65,7 @@ const PostingScreen = () => {
             setUploading(false);
             setImage(null);
 
-            Alert.alert(
-                'Image uploaded!',
-                'Your image has been uploaded to the Firebase Cloud Storage Successfully!',
-            );
+
             return url;
 
         } catch (e) {
@@ -81,12 +81,16 @@ const PostingScreen = () => {
         firestore().collection('posts').add({
             userId: user.uid,
             caption: caption,
-            postImg: imgURL.toString(),
+            postImg: imgURL,
             postTime: firestore.Timestamp.fromDate(new Date()),
             likes: null,
             comments: null
         }).then(() => {
-            console.log(Completed);
+            Alert.alert(
+                'Image published!',
+                'Your image has been uploaded to the Firebase Cloud Storage Successfully!',
+            );
+            navigation.goBack()
         }).catch((error) => {
             console.log(error);
         })
