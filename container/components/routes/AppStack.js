@@ -120,26 +120,7 @@ const ProfileStack = ({ navigation }) => (
             name="Profile"
             component={ProfileScreen}
             options={{
-                headerTitleAlign: 'center',
-                headerTitleStyle: {
-                    color: colors.primaryColor,
-                    fontSize: 26,
-                    fontWeight: '700'
-                },
-                headerStyle: {
-                    shadowColor: '#fff',
-                    elevation: 0,
-                },
-                headerRight: () => (
-                    <Pressable onPress={() => alert('avc')}>
-                        <FontAwesomeIcon icon={faPlus} size={20} color={colors.primaryColor} />
-                    </Pressable>
-                ),
-                headerLeft: () => (
-                    <Pressable onPress={() => alert('avc')}>
-                        <FontAwesomeIcon icon={faCamera} size={20} color={colors.primaryColor} />
-                    </Pressable>
-                )
+                headerShown: false
             }}
         />
     </Stack.Navigator>

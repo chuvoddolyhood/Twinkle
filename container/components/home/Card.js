@@ -12,12 +12,14 @@ const Card = (props) => {
     const [height, setHeight] = useState(0);
 
     useEffect(() => {
-        Image.getSize(postImg, (width, height) => {
-            setHeight(height);
-            setLoading(true)
-        }, (errorMsg) => {
-            console.log(errorMsg);
-        });
+        if (postImg) {
+            Image.getSize(postImg, (width, height) => {
+                setHeight(height);
+                setLoading(true)
+            }, (errorMsg) => {
+                console.log(errorMsg);
+            });
+        }
     }, [])
 
     // console.log(postTime.toDate().toString());
