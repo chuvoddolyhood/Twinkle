@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, FlatList, ActivityIndicator, SafeAreaView } from 'react-native'
+import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, StatusBar } from 'react-native'
 import React, { useContext, useState, useEffect } from 'react'
 import { AuthContext } from '../routes/AuthProvider'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
@@ -6,18 +6,20 @@ import { faEllipsis, faTableCells, faTableList } from '@fortawesome/free-solid-s
 import colors from '../../assets/colors'
 import LinearGradient from 'react-native-linear-gradient'
 import firestore from '@react-native-firebase/firestore';
-import MasonryList from "react-native-masonry-list";
+import theme from '../../assets/theme/theme'
+import Gallery from './Gallery'
+
 
 const ProfileScreen = () => {
     const { user, logOut } = useContext(AuthContext)
 
     const [dataPosting, setDataPosting] = useState([])
-    const [dataImg, setDataImg] = useState([])
     const [loading, setLoading] = useState(true)
+    const [photo, setPhoto] = useState('');
+    const [visible, setVisible] = useState(false);
 
     const fetchPosts = async () => {
-        const list = [];
-        const URL_IMG = [];
+        list = [];
         try {
             await firestore().collection('posts').where('userId', '==', user.uid).orderBy('postTime', 'desc').get().then(querySnapshot => {
                 querySnapshot.forEach(documentSnapshot => {
@@ -25,17 +27,12 @@ const ProfileScreen = () => {
                         id: documentSnapshot.id,
                         ...documentSnapshot.data()
                     })
-
-                    URL_IMG.push({ uri: documentSnapshot.data().postImg })
-
-                    setDataPosting(list)
-                    setDataImg(URL_IMG)
-
-                    if (loading) {
-                        setLoading(false);
-                    }
                 });
-            })
+            });
+            setDataPosting(list)
+            if (dataPosting) {
+                setLoading(false)
+            }
         } catch (error) {
             console.log(error);
         }
@@ -45,6 +42,20 @@ const ProfileScreen = () => {
         fetchPosts()
     }, [])
 
+    //Show photo when long Pressing on photo
+    const choosePhoto = (url) => {
+        setPhoto(url)
+        setVisible(true)
+    }
+
+    //Go back previous screen when Pressing out on photo
+    const unChoosePhoto = () => {
+        setPhoto(null)
+        setVisible(false)
+    }
+
+    // console.log('dataPosting', dataPosting);
+
     return (
         <LinearGradient colors={[`${colors.secondColor}`, `${colors.thirdColor}`]} style={styles.container}>
             <View style={styles.header}>
@@ -53,60 +64,161 @@ const ProfileScreen = () => {
                     <FontAwesomeIcon icon={faEllipsis} size={20} color={colors.primaryColor} />
                 </View>
             </View>
-            <View style={styles.info}>
-                <View style={styles.avatarArea}>
-                    <View style={styles.nameArea}>
-                        <Text style={styles.nickname}>@chuvod.dolyhood</Text>
-                        <Text style={styles.name}>Chloé de Janvier</Text>
+            <View style={styles.scrollContainer}>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View style={styles.info}>
+                        <View style={styles.avatarArea}>
+                            <View style={styles.nameArea}>
+                                <Text style={styles.nickname}>@chuvod.dolyhood</Text>
+                                <Text style={styles.name}>Chloé de Janvier</Text>
+                            </View>
+                            <LinearGradient
+                                colors={[`${colors.heartColor}`, `${colors.chooseBlue}`]}
+                                style={{
+                                    padding: 2,
+                                    borderRadius: 29,
+                                }}
+                            >
+                                <View
+                                    style={{
+                                        padding: 3,
+                                        borderRadius: 27,
+                                        backgroundColor: colors.secondColor
+                                    }}>
+                                    <Image
+                                        style={{
+                                            width: 80,
+                                            height: 80,
+                                            borderRadius: 25,
+                                            resizeMode: 'cover',
+                                        }}
+                                        source={require('./../../assets/img/anhthe.png')}
+                                    />
+                                </View>
+                            </LinearGradient>
+
+                        </View>
+                        <View style={styles.aboutMeArea}>
+                            <Text style={styles.aboutMe}>About me</Text>
+                            <Text style={styles.aboutMeContent}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris mauris est, porttitor id condimentum a, suscipit in nunc</Text>
+                        </View>
                     </View>
-                    <LinearGradient
-                        colors={[`${colors.heartColor}`, `${colors.chooseBlue}`]}
+
+                    <View style={styles.body}>
+                        <View style={styles.PFFContainer}>
+                            <View style={[styles.PFFBox, styles.PFFBox_choose]}>
+                                <Text style={styles.numberPFFBox}>52</Text>
+                                <Text style={styles.textPFFBox}>Post</Text>
+                            </View>
+                            <View style={styles.PFFBox}>
+                                <Text style={styles.numberPFFBox}>250</Text>
+                                <Text style={styles.textPFFBox}>Following</Text>
+                            </View>
+                            <View style={styles.PFFBox}>
+                                <Text style={styles.numberPFFBox}>4.5k</Text>
+                                <Text style={styles.textPFFBox}>Followers</Text>
+                            </View>
+                        </View>
+                        <View style={styles.headingArea}>
+                            <Text style={styles.headingPost}>My Posts</Text>
+                            <View style={styles.containerIconList}>
+                                <FontAwesomeIcon icon={faTableCells} size={22} color={colors.primaryColor} style={{ marginLeft: 10 }} />
+                                <FontAwesomeIcon icon={faTableList} size={22} color={colors.iconColor} style={{ marginLeft: 15 }} />
+                            </View>
+                        </View>
+                        {loading ? <ActivityIndicator size='large' color={colors.primaryColor} animating /> :
+                            <View>
+                                {dataPosting.length === 0 ?
+                                    <View style={{ height: theme.dimension.windowHeight * 2 / 3 }}>
+                                        <Text>Chưa có bài viết nào</Text>
+                                    </View>
+                                    :
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        flexWrap: 'wrap-reverse',
+                                        justifyContent: 'space-between',
+                                        marginVertical: 20
+                                    }}>
+                                        {dataPosting.map((value, index) => {
+                                            return (
+                                                <Gallery
+                                                    key={index}
+                                                    items={value}
+                                                    onChoose={choosePhoto}
+                                                    onUnChoose={unChoosePhoto}
+                                                />
+                                            )
+                                        })}
+                                    </View>
+                                }
+                            </View>
+                        }
+                    </View>
+                </ScrollView>
+            </View>
+
+
+            {visible ? (
+                <View
+                    style={{
+                        position: 'absolute',
+                        zIndex: 100,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(52,52,52,0.8)',
+                    }}>
+                    <StatusBar backgroundColor="#525252" barStyle="dark-content" />
+                    <View
                         style={{
-                            padding: 2,
-                            borderRadius: 29,
-                        }}
-                    >
+                            position: 'absolute',
+                            top: theme.dimension.windowHeight / 6,
+                            left: theme.dimension.windowWidth / 18,
+                            backgroundColor: 'white',
+                            width: '90%',
+                            height: 465,
+                            borderRadius: 15,
+                            zIndex: 1,
+                            elevation: 50,
+                        }}>
                         <View
                             style={{
-                                padding: 3,
-                                borderRadius: 27,
-                                backgroundColor: colors.secondColor
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                paddingVertical: 10,
+                                paddingHorizontal: 15,
                             }}>
                             <Image
+                                source={{ uri: photo }}
                                 style={{
-                                    width: 80,
-                                    height: 80,
-                                    borderRadius: 25,
-                                    resizeMode: 'cover',
+                                    width: 30,
+                                    height: 30,
+                                    borderRadius: 100,
                                 }}
-                                source={require('./../../assets/img/anhthe.png')}
                             />
+                            <View style={{ paddingLeft: 8 }}>
+                                <Text style={{ fontSize: 12, fontWeight: '600' }}>
+                                    the_anonymous_guy
+                                </Text>
+                            </View>
                         </View>
-                    </LinearGradient>
-
-                </View>
-                <View style={styles.aboutMeArea}>
-                    <Text style={styles.aboutMe}>About me</Text>
-                    <Text style={styles.aboutMeContent}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris mauris est, porttitor id condimentum a, suscipit in nunc</Text>
-                </View>
-            </View>
-            <View style={styles.body}>
-                <View style={styles.headingArea}>
-                    <Text style={styles.headingPost}>My Posts</Text>
-                    <View style={styles.containerIconList}>
-                        <FontAwesomeIcon icon={faTableList} size={25} color={colors.primaryColor} style={{ marginLeft: 10 }} />
-                        <FontAwesomeIcon icon={faTableCells} size={25} color={colors.primaryColor} style={{ marginLeft: 10 }} />
+                        <Image source={{ uri: photo }} style={{ width: '100%', height: '80%' }} />
+                        <View
+                            style={{
+                                justifyContent: 'space-around',
+                                width: '100%',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                padding: 8,
+                            }}>
+                            {/* <Ionic name="ios-heart-outline" style={{fontSize: 26}} />
+              <Ionic name="ios-person-circle-outline" style={{fontSize: 26}} />
+              <Feather name="navigation" style={{fontSize: 26}} /> */}
+                        </View>
                     </View>
                 </View>
-                {loading ? <ActivityIndicator size='large' color={colors.primaryColor} animating /> :
-                    <MasonryList
-                        images={dataImg}
-                    // Version *2.14.0 update
-                    // onEndReached={() => {
-                    //     // add more images when scrolls reaches end
-                    // }}
-                    />}
-            </View>
+            ) : null}
         </LinearGradient>
     )
 }
@@ -121,7 +233,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 15,
         paddingHorizontal: 20,
         // shadowColor: '#000',
         // shadowOffset: { width: 0, height: 2 },
@@ -129,6 +240,9 @@ const styles = StyleSheet.create({
         // shadowRadius: 2,
         elevation: 1, // changed to a greater value
         // zIndex: 99, // added zIndex
+    },
+    scrollContainer: {
+        flex: 10,
     },
     heading: {
         color: colors.headingColor,
@@ -143,10 +257,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     info: {
-        flex: 4,
         paddingVertical: 15,
         paddingHorizontal: 20,
-
     },
     avatarArea: {
         flexDirection: 'row',
@@ -174,11 +286,42 @@ const styles = StyleSheet.create({
     aboutMeContent: {
         color: colors.textColor,
     },
+    PFFContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        backgroundColor: colors.unChooseBlue,
+        // height: 40,
+        width: '100%',
+        position: 'absolute',
+        marginTop: -25,
+        marginHorizontal: 20,
+        borderRadius: 10
+    },
+    PFFBox: {
+        alignItems: 'center',
+        paddingVertical: 13,
+        paddingHorizontal: 39,
+        borderRadius: 10,
+    },
+    PFFBox_choose: {
+        backgroundColor: colors.chooseBlue,
+    },
+    numberPFFBox: {
+        color: colors.whiteColor,
+        fontWeight: 'bold',
+        fontSize: 20
+    },
+    textPFFBox: {
+        color: colors.whiteColor
+    },
     body: {
-        flex: 14,
         paddingHorizontal: 20,
+        paddingTop: 55,
         backgroundColor: colors.whiteColor,
-
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        marginTop: 30,
     },
     headingArea: {
         flexDirection: 'row',

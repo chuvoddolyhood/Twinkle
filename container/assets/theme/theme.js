@@ -1,3 +1,4 @@
+import { Dimensions } from 'react-native';
 const theme = {
     light: {
         color: 'black',
@@ -6,6 +7,10 @@ const theme = {
     dark: {
         color: 'white',
         background: 'black'
+    },
+    dimension: {
+        windowWidth: Dimensions.get('window').width,
+        windowHeight: Dimensions.get('window').height,
     }
 }
 
