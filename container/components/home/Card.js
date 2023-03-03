@@ -1,13 +1,16 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Alert } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import colors from '../../assets/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faComment, faHeart, faLocationDot, faShare } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
+import { AuthContext } from '../routes/AuthProvider';
 
 const Card = (props) => {
     const { id, caption, comments, likes, postImg, postTime, userId } = props.items
+
+    const { user, logOut } = useContext(AuthContext)
 
     const [loading, setLoading] = useState(false)
     const [height, setHeight] = useState(0);
@@ -38,6 +41,13 @@ const Card = (props) => {
             setOptions(false)
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    //permission to delete photos of myself posted
+    const showModal = () => {
+        if (userId === user.uid) {
+            setOptions(true)
         }
     }
 
@@ -73,7 +83,7 @@ const Card = (props) => {
                 <Text style={styles.caption}>{caption} {id}</Text>
                 {loading &&
                     <TouchableOpacity
-                        onLongPress={() => setOptions(true)}
+                        onLongPress={showModal}
                     >
                         <Image
                             source={{ uri: postImg }}
