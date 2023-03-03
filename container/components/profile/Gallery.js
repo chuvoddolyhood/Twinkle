@@ -14,6 +14,7 @@ const Gallery = (props) => {
             style={{ paddingBottom: 2 }}
             onLongPress={getURLImage}
             onPressOut={props.onUnChoose}
+            onPress={props.onPress}
         >
             <Image
                 source={{ uri: postImg }}

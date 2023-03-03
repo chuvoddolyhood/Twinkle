@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, StatusBar } from 'react-native'
+import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView } from 'react-native'
 import React, { useContext, useState, useEffect } from 'react'
 import { AuthContext } from '../routes/AuthProvider'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
@@ -8,6 +8,8 @@ import LinearGradient from 'react-native-linear-gradient'
 import firestore from '@react-native-firebase/firestore';
 import theme from '../../assets/theme/theme'
 import Gallery from './Gallery'
+import PhotoPreview from './PhotoPreview'
+import { useNavigation } from '@react-navigation/native';
 
 
 const ProfileScreen = () => {
@@ -17,6 +19,8 @@ const ProfileScreen = () => {
     const [loading, setLoading] = useState(true)
     const [photo, setPhoto] = useState('');
     const [visible, setVisible] = useState(false);
+
+    const navigation = useNavigation();
 
     const fetchPosts = async () => {
         list = [];
@@ -148,6 +152,7 @@ const ProfileScreen = () => {
                                                     items={value}
                                                     onChoose={choosePhoto}
                                                     onUnChoose={unChoosePhoto}
+                                                    onPress={() => { navigation.navigate('PostList') }}
                                                 />
                                             )
                                         })}
@@ -159,66 +164,7 @@ const ProfileScreen = () => {
                 </ScrollView>
             </View>
 
-
-            {visible ? (
-                <View
-                    style={{
-                        position: 'absolute',
-                        zIndex: 100,
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: 'rgba(52,52,52,0.8)',
-                    }}>
-                    <StatusBar backgroundColor="#525252" barStyle="dark-content" />
-                    <View
-                        style={{
-                            position: 'absolute',
-                            top: theme.dimension.windowHeight / 6,
-                            left: theme.dimension.windowWidth / 18,
-                            backgroundColor: 'white',
-                            width: '90%',
-                            height: 465,
-                            borderRadius: 15,
-                            zIndex: 1,
-                            elevation: 50,
-                        }}>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                paddingVertical: 10,
-                                paddingHorizontal: 15,
-                            }}>
-                            <Image
-                                source={{ uri: photo }}
-                                style={{
-                                    width: 30,
-                                    height: 30,
-                                    borderRadius: 100,
-                                }}
-                            />
-                            <View style={{ paddingLeft: 8 }}>
-                                <Text style={{ fontSize: 12, fontWeight: '600' }}>
-                                    the_anonymous_guy
-                                </Text>
-                            </View>
-                        </View>
-                        <Image source={{ uri: photo }} style={{ width: '100%', height: '80%' }} />
-                        <View
-                            style={{
-                                justifyContent: 'space-around',
-                                width: '100%',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                padding: 8,
-                            }}>
-                            {/* <Ionic name="ios-heart-outline" style={{fontSize: 26}} />
-              <Ionic name="ios-person-circle-outline" style={{fontSize: 26}} />
-              <Feather name="navigation" style={{fontSize: 26}} /> */}
-                        </View>
-                    </View>
-                </View>
-            ) : null}
+            {visible ? <PhotoPreview photo={photo} /> : null}
         </LinearGradient>
     )
 }

@@ -1,16 +1,15 @@
 import React from 'react'
-import HomeScreen from '../home/HomeScreen'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { faBell, faCamera, faHome, faMessage, faPlus, faSearch, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import colors from '../../assets/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import ProfileScreen from '../profile/ProfileScreen';
 import NotificationScreen from '../notification/NotificationScreen';
 import MessageScreen from '../messages/MessageScreen';
 import { Pressable } from "react-native";
 import SearchScreen from '../search/SearchScreen';
 import FeedStack from './Stack/FeedStack';
+import ProfileStack from './Stack/ProfileStack';
 
 /**
  * 
@@ -95,20 +94,7 @@ const NotificationStack = ({ navigation }) => (
     </Stack.Navigator>
 )
 
-const ProfileStack = ({ navigation }) => (
-    <Stack.Navigator>
-        <Stack.Screen
-            name="Profile"
-            component={ProfileScreen}
-            options={{
-                headerShown: false
-            }}
-        />
-    </Stack.Navigator>
-)
-
 const AppStack = () => {
-
     return (
         <Tab.Navigator>
             <Tab.Screen
