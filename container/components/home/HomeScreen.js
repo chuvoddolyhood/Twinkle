@@ -17,7 +17,7 @@ const HomeScreen = () => {
     const fetchPosts = async () => {
         const list = [];
         try {
-            await firestore().collection('posts').orderBy('postTime', 'desc').get().then(querySnapshot => {
+            await firestore().collection('posts').where('status', '==', 1).orderBy('postTime', 'desc').get().then(querySnapshot => {
                 // console.log('Total users: ', querySnapshot.size);
 
                 querySnapshot.forEach(documentSnapshot => {

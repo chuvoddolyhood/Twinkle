@@ -10,6 +10,7 @@ import theme from '../../assets/theme/theme'
 import Gallery from './Gallery'
 import PhotoPreview from './PhotoPreview'
 import { useNavigation } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native'
 
 
 const ProfileScreen = () => {
@@ -25,7 +26,7 @@ const ProfileScreen = () => {
     const fetchPosts = async () => {
         list = [];
         try {
-            await firestore().collection('posts').where('userId', '==', user.uid).orderBy('postTime', 'desc').get().then(querySnapshot => {
+            await firestore().collection('posts').where('userId', '==', user.uid).where('status', '==', 1).orderBy('postTime', 'desc').get().then(querySnapshot => {
                 querySnapshot.forEach(documentSnapshot => {
                     list.push({
                         id: documentSnapshot.id,
@@ -57,6 +58,11 @@ const ProfileScreen = () => {
         setPhoto(null)
         setVisible(false)
     }
+
+    const isFocused = useIsFocused()
+    useEffect(() => {
+        fetchPosts()
+    }, [isFocused])
 
     // console.log('dataPosting', dataPosting);
 

@@ -84,7 +84,8 @@ const PostingScreen = () => {
             postImg: imgURL,
             postTime: firestore.Timestamp.fromDate(new Date()),
             likes: null,
-            comments: null
+            comments: null,
+            status: 1
         }).then(() => {
             Alert.alert(
                 'Image published!',

@@ -9,6 +9,7 @@ import { AuthContext } from '../routes/AuthProvider'
 import Card from '../home/Card'
 import { useNavigation } from '@react-navigation/native';
 import Animated, { Easing } from 'react-native-reanimated'
+import theme from '../../assets/theme/theme'
 
 const PostList = () => {
     const { user, logOut } = useContext(AuthContext)
@@ -22,7 +23,7 @@ const PostList = () => {
     const fetchPosts = async () => {
         list = [];
         try {
-            await firestore().collection('posts').where('userId', '==', user.uid).orderBy('postTime', 'desc').get().then(querySnapshot => {
+            await firestore().collection('posts').where('userId', '==', user.uid).where('status', '==', 1).orderBy('postTime', 'desc').get().then(querySnapshot => {
                 querySnapshot.forEach(documentSnapshot => {
                     list.push({
                         id: documentSnapshot.id,
@@ -48,59 +49,30 @@ const PostList = () => {
         transform: [
             {
                 translateY: animatedValue.interpolate({
-                    inputRange: [0, 60],
-                    outputRange: [0, -60],
+                    inputRange: [0, theme.dimension.windowHeight / 2, theme.dimension.windowHeight],
+                    outputRange: [0, -theme.dimension.windowHeight / 200, -theme.dimension.windowHeight / 10],
                     extrapolate: 'clamp'
                 })
             },
         ],
     }
 
-    const headerBarAnimation_down = {
-        transform: [
-            {
-                translateY: animatedValue.interpolate({
-                    inputRange: [0, 60],
-                    outputRange: [-60, 0],
-                    extrapolate: 'clamp'
-                })
-            },
-        ],
-    }
-
-    const iconAnimation = {
-        transform: [
-            {
-                translateX: animatedValue.interpolate({
-                    inputRange: [0, 60],
-                    outputRange: [0, -300],
-                    extrapolate: 'clamp'
-                })
-            },
-        ],
-    }
-
-    const textAnimation = {
-        transform: [
-            {
-                translateX: animatedValue.interpolate({
-                    inputRange: [0, 60],
-                    outputRange: [0, 300],
-                    extrapolate: 'clamp'
-                })
-            },
-        ],
+    const reRender = (status) => {
+        if (status) {
+            fetchPosts()
+        }
+        console.log(status);
     }
 
     return (
         <LinearGradient colors={[`${colors.secondColor}`, `${colors.thirdColor}`]} style={styles.container}>
             <Animated.View style={[styles.header, headerBarAnimation_up]}>
                 <TouchableOpacity onPress={() => { navigation.goBack() }}>
-                    <Animated.View style={[styles.backgroundIcon, iconAnimation]} >
+                    <View style={styles.backgroundIcon} >
                         <FontAwesomeIcon icon={faArrowCircleLeft} size={20} color={colors.primaryColor} />
-                    </Animated.View>
+                    </View>
                 </TouchableOpacity>
-                <Animated.Text style={[styles.heading, textAnimation]}>Posts</Animated.Text>
+                <Text style={styles.heading}>Posts</Text>
             </Animated.View>
             <View style={styles.body}>
                 {loading ? <ActivityIndicator size='large' color={colors.primaryColor} animating /> :
@@ -115,7 +87,7 @@ const PostList = () => {
                         {dataPosting.map((value, index) => (
                             <View key={index}>
                                 <View style={{ marginTop: 60 }} />
-                                <Card items={value} />
+                                <Card items={value} reRender={reRender} />
                             </View>
                         ))}
                     </ScrollView>

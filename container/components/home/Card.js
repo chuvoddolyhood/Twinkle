@@ -1,15 +1,17 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Alert } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import colors from '../../assets/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faComment, faHeart, faLocationDot, faShare } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
+import firestore from '@react-native-firebase/firestore';
 
 const Card = (props) => {
     const { id, caption, comments, likes, postImg, postTime, userId } = props.items
 
     const [loading, setLoading] = useState(false)
     const [height, setHeight] = useState(0);
+    const [options, setOptions] = useState(false)
 
     useEffect(() => {
         if (postImg) {
@@ -22,7 +24,22 @@ const Card = (props) => {
         }
     }, [])
 
-    // console.log(postTime.toDate().toString());
+    const deletePhoto = async () => {
+        try {
+            await firestore().collection('posts').doc(id)
+                .update({
+                    status: 0,
+                })
+                .then(() => {
+                    setLoading(true)
+                    props.reRender(true);
+                    console.log('Updated!');
+                });
+            setOptions(false)
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <View style={styles.cardContainer}>
@@ -54,16 +71,51 @@ const Card = (props) => {
             </View>
             <View style={styles.body}>
                 <Text style={styles.caption}>{caption} {id}</Text>
-                {loading && <Image
-                    source={{ uri: postImg }}
-                    resizeMode='cover'
-                    style={{
-                        width: '100%',
-                        height: height / 6,
-                        borderRadius: 15
-                    }}
-                />}
+                {loading &&
+                    <TouchableOpacity
+                        onLongPress={() => setOptions(true)}
+                    >
+                        <Image
+                            source={{ uri: postImg }}
+                            resizeMode='cover'
+                            style={{
+                                width: '100%',
+                                height: height / 6,
+                                borderRadius: 15
+                            }}
+                        />
+                    </TouchableOpacity>}
             </View>
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={options}
+                animated
+                onRequestClose={() => {
+                    Alert.alert('Close.');
+                    setOptions(!options);
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{ width: 200, height: 150, backgroundColor: colors.secondColor, borderRadius: 20, elevation: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Delete photo</Text>
+                        <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', alignItems: 'center', width: '80%' }}>
+                            <TouchableOpacity
+                                style={[styles.containerImgFunc, { backgroundColor: colors.backgroundHeart, }]}
+                                onPress={deletePhoto}
+                            >
+                                <Text>OK</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.containerImgFunc, { backgroundColor: colors.backgroundIcon, }]}
+                                onPress={() => setOptions(false)}
+                            >
+                                <Text>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
             <View style={styles.footer}>
                 <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundHeart, }]}>
                     <FontAwesomeIcon icon={faHeart} size={20} color={true ? colors.heartColor : colors.textColor} style={styles.iconFunc} />
