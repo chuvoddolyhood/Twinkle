@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native'
 import React, { useContext, useState, useEffect } from 'react'
 import { AuthContext } from '../routes/AuthProvider'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
@@ -70,9 +70,11 @@ const ProfileScreen = () => {
         <LinearGradient colors={[`${colors.secondColor}`, `${colors.thirdColor}`]} style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.heading}>Profile</Text>
-                <View style={styles.backgroundIcon}>
-                    <FontAwesomeIcon icon={faEllipsis} size={20} color={colors.primaryColor} />
-                </View>
+                <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
+                    <View style={styles.backgroundIcon}>
+                        <FontAwesomeIcon icon={faEllipsis} size={20} color={colors.primaryColor} />
+                    </View>
+                </TouchableOpacity>
             </View>
             <View style={styles.scrollContainer}>
                 <ScrollView
