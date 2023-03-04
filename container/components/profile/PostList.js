@@ -10,6 +10,7 @@ import Card from '../home/Card'
 import { useNavigation } from '@react-navigation/native';
 import Animated, { Easing } from 'react-native-reanimated'
 import theme from '../../assets/theme/theme'
+import { CardSkeleton } from '../expanse'
 
 const PostList = () => {
     const { user, logOut } = useContext(AuthContext)
@@ -75,7 +76,9 @@ const PostList = () => {
                 <Text style={styles.heading}>Posts</Text>
             </Animated.View>
             <View style={styles.body}>
-                {loading ? <ActivityIndicator size='large' color={colors.primaryColor} animating /> :
+                {loading ?
+                    <CardSkeleton />
+                    :
                     <ScrollView
                         showsVerticalScrollIndicator={false}
                         onScroll={e => {

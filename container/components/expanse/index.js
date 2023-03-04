@@ -2,4 +2,6 @@ import choosePhotoFromLibrary from "./choosePhotoFromLibrary";
 
 import takePhotoFromCamera from "./takePhotoFromCamera";
 
-export { choosePhotoFromLibrary, takePhotoFromCamera }
+import CardSkeleton from "./CardSkeleton";
+
+export { choosePhotoFromLibrary, takePhotoFromCamera, CardSkeleton }
