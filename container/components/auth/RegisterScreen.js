@@ -46,8 +46,9 @@ export default function RegisterScreen({ navigation }) {
         setErrorPassword(!isValidPassword(password) ? 'Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters.' : '');
         setErrorRePassword(!isValidRePassword(password, rePassword) ? "Password didn't match." : '');
 
-        if (isValidationOK())
-            signUp(username, password)
+        if (isValidationOK()) {
+            signUp(name, username, password)
+        }
     }
 
     return (

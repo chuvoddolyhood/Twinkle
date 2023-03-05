@@ -2,6 +2,8 @@ import React, { createContext, useState } from 'react'
 import auth from '@react-native-firebase/auth'
 import Routes from './Routes';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import firestore from '@react-native-firebase/firestore';
+import { Base64 } from 'js-base64';
 
 //create context so that sharing state in which component that you want to share it
 export const AuthContext = createContext();
@@ -29,9 +31,26 @@ const AuthProvider = () => {
                         console.log(error);
                     }
                 },
-                signUp: async (email, password) => {
+                signUp: async (name, email, password) => {
                     try {
-                        await auth().createUserWithEmailAndPassword(email, password).then(() => console.log('User signed up!'));
+                        await auth().createUserWithEmailAndPassword(email, password).then(() => {
+                            firestore().collection('users').doc(auth().currentUser.uid).set({
+                                userId: auth().currentUser.uid,
+                                name: name,
+                                nickname: null,
+                                imgURL: null,
+                                bio: null,
+                                username: email,
+                                password: Base64.encode(password),
+                                createdAt: firestore.Timestamp.fromDate(new Date()),
+                                providers: auth().currentUser.providerData[0].providerId
+                            }).catch(error => {
+                                console.log('Something went wrong with added user to firestore: ', error);
+                            })
+
+                            console.log('User signed up!')
+                        }
+                        );
                     } catch (error) {
                         if (error.code === 'auth/email-already-in-use') {
                             console.log('That email address is already in use!');
@@ -56,7 +75,23 @@ const AuthProvider = () => {
                         const { idToken } = await GoogleSignin.signIn();
                         const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-                        await auth().signInWithCredential(googleCredential);
+                        await auth().signInWithCredential(googleCredential).then(() => {
+                            firestore().collection('users').doc(auth().currentUser.uid).set({
+                                userId: auth().currentUser.uid,
+                                name: auth().currentUser.displayName,
+                                nickname: null,
+                                imgURL: auth().currentUser.photoURL,
+                                bio: null,
+                                username: auth().currentUser.email,
+                                password: null,
+                                createdAt: firestore.Timestamp.fromDate(new Date()),
+                                providers: auth().currentUser.providerData[0].providerId
+                            }).catch(error => {
+                                console.log('Something went wrong with added user to firestore: ', error);
+                            })
+
+                            console.log('User signed up!')
+                        });
                     } catch (error) {
                         console.log(error);
                     }
