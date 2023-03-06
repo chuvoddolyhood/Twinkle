@@ -1,4 +1,4 @@
-import { StyleSheet, FlatList, ActivityIndicator } from 'react-native'
+import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 
 import { AuthContext } from '../routes/AuthProvider'
@@ -7,6 +7,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import Card from './Card'
 import firestore from '@react-native-firebase/firestore';
 import { useIsFocused } from '@react-navigation/native'
+import theme from '../../assets/theme/theme'
 
 const HomeScreen = () => {
     const { user, logOut } = useContext(AuthContext)
@@ -31,9 +32,6 @@ const HomeScreen = () => {
 
                     setDataPosting(list)
 
-                    if (loading) {
-                        setLoading(false);
-                    }
                 });
             })
         } catch (error) {
@@ -43,7 +41,7 @@ const HomeScreen = () => {
 
     useEffect(() => {
         fetchPosts()
-        // setLoading(true)
+        setLoading(false)
     }, [])
 
     //Nhan biet sau khi navigate ve home screen thi se re-render app
@@ -55,12 +53,20 @@ const HomeScreen = () => {
 
     return (
         <LinearGradient colors={[`${colors.secondColor}`, `${colors.thirdColor}`]} style={styles.container}>
-            {loading ? <ActivityIndicator size='large' color={colors.primaryColor} animating /> : <FlatList
-                data={dataPosting}
-                renderItem={({ item }) => <Card items={item} />}
-                keyExtractor={item => item.id}
-                showsVerticalScrollIndicator={false}
-            />}
+            {loading ? <ActivityIndicator size='large' color={colors.primaryColor} animating /> :
+                <View>
+                    {dataPosting ?
+                        <View style={{ alignItems: 'center', justifyContent: 'center', height: theme.dimension.windowHeight / 1.5 }}>
+                            <Text>No posts yet.</Text>
+                        </View> :
+                        <FlatList
+                            data={dataPosting}
+                            renderItem={({ item }) => <Card items={item} />}
+                            keyExtractor={item => item.id}
+                            showsVerticalScrollIndicator={false}
+                        />}
+                </View>
+            }
         </LinearGradient>
     )
 }

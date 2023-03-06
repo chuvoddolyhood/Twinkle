@@ -14,8 +14,9 @@ import { useIsFocused } from '@react-navigation/native'
 
 
 const ProfileScreen = () => {
-    const { user, logOut } = useContext(AuthContext)
+    const { user } = useContext(AuthContext)
 
+    const [dataUser, setDataUser] = useState([])
     const [dataPosting, setDataPosting] = useState([])
     const [loading, setLoading] = useState(true)
     const [photo, setPhoto] = useState('');
@@ -35,9 +36,19 @@ const ProfileScreen = () => {
                 });
             });
             setDataPosting(list)
-            if (dataPosting) {
-                setLoading(false)
-            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const fetchUser = async () => {
+        try {
+            await firestore().collection('users').where('userId', '==', user.uid).get().then(querySnapshot => {
+                querySnapshot.forEach(documentSnapshot => {
+                    // console.log(documentSnapshot.data());
+                    setDataUser(documentSnapshot.data())
+                });
+            });
         } catch (error) {
             console.log(error);
         }
@@ -45,6 +56,11 @@ const ProfileScreen = () => {
 
     useEffect(() => {
         fetchPosts()
+        fetchUser()
+
+        if (dataPosting || dataUser) {
+            setLoading(false)
+        }
     }, [])
 
     //Show photo when long Pressing on photo
@@ -62,9 +78,8 @@ const ProfileScreen = () => {
     const isFocused = useIsFocused()
     useEffect(() => {
         fetchPosts()
+        fetchUser()
     }, [isFocused])
-
-    // console.log('dataPosting', dataPosting);
 
     return (
         <LinearGradient colors={[`${colors.secondColor}`, `${colors.thirdColor}`]} style={styles.container}>
@@ -83,8 +98,8 @@ const ProfileScreen = () => {
                     <View style={styles.info}>
                         <View style={styles.avatarArea}>
                             <View style={styles.nameArea}>
-                                <Text style={styles.nickname}>@chuvod.dolyhood</Text>
-                                <Text style={styles.name}>Chloé de Janvier</Text>
+                                {dataUser.nickname ? <Text style={styles.nickname}>@{dataUser.nickname}</Text> : <Text style={styles.nickname}>@your-nickname</Text>}
+                                <Text style={styles.name}>{dataUser.name}</Text>
                             </View>
                             <LinearGradient
                                 colors={[`${colors.heartColor}`, `${colors.chooseBlue}`]}
@@ -106,15 +121,16 @@ const ProfileScreen = () => {
                                             borderRadius: 25,
                                             resizeMode: 'cover',
                                         }}
-                                        source={require('./../../assets/img/anhthe.png')}
+                                        source={dataUser.imgURL ? { uri: dataUser.imgURL } : require('./../../assets/img/blankAvatar.png')}
                                     />
                                 </View>
                             </LinearGradient>
 
                         </View>
+
                         <View style={styles.aboutMeArea}>
                             <Text style={styles.aboutMe}>About me</Text>
-                            <Text style={styles.aboutMeContent}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris mauris est, porttitor id condimentum a, suscipit in nunc</Text>
+                            {dataUser.bio ? <Text style={styles.aboutMeContent}>{dataUser.bio}</Text> : <Text style={styles.aboutMeContent}>Your Bio</Text>}
                         </View>
                     </View>
 
@@ -144,14 +160,15 @@ const ProfileScreen = () => {
                             <View>
                                 {dataPosting.length === 0 ?
                                     <View style={{ height: theme.dimension.windowHeight * 2 / 3 }}>
-                                        <Text>Chưa có bài viết nào</Text>
+                                        <Text>No posts yet.</Text>
                                     </View>
                                     :
                                     <View style={{
                                         flexDirection: 'row',
                                         flexWrap: 'wrap-reverse',
                                         justifyContent: 'space-between',
-                                        marginVertical: 20
+                                        marginVertical: 20,
+                                        height: theme.dimension.windowHeight * 2 / 3
                                     }}>
                                         {dataPosting.map((value, index) => {
                                             return (
