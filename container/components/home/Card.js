@@ -6,9 +6,11 @@ import { faComment, faHeart, faLocationDot, faShare } from '@fortawesome/free-so
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import { AuthContext } from '../routes/AuthProvider';
+import assets from '../../assets/img';
 
 const Card = (props) => {
     const { id, caption, comments, likes, postImg, postTime, userId } = props.items
+    const { imgURL, name, nickname } = props.user
 
     const { user, logOut } = useContext(AuthContext)
 
@@ -63,10 +65,10 @@ const Card = (props) => {
                             resizeMode: 'cover',
                             marginRight: 10
                         }}
-                        source={require('./../../assets/img/anhthe.png')}
+                        source={imgURL ? { uri: imgURL } : assets.photo.img_5}
                     />
                     <View style={styles.containerAllText}>
-                        <Text style={styles.textName}>chuvod.dolyhood</Text>
+                        <Text style={styles.textName}>{nickname ? nickname : name}</Text>
                         <View style={styles.containerNameLocation}>
                             <View style={styles.containerLocationTime}>
                                 <FontAwesomeIcon icon={faLocationDot} size={12} color={colors.iconColor} />
@@ -80,7 +82,7 @@ const Card = (props) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.body}>
-                <Text style={styles.caption}>{caption} {id}</Text>
+                <Text style={styles.caption}>{caption}</Text>
                 {loading &&
                     <TouchableOpacity
                         onLongPress={showModal}

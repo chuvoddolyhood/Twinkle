@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useIsFocused } from '@react-navigation/native'
 import Animated from 'react-native-reanimated'
 import Button from '../auth/Button'
+import assets from '../../assets/img'
 
 
 const ProfileScreen = () => {
@@ -146,7 +147,7 @@ const ProfileScreen = () => {
                                                 borderRadius: 25,
                                                 resizeMode: 'cover',
                                             }}
-                                            source={dataUser.imgURL ? { uri: dataUser.imgURL } : require('./../../assets/img/blankAvatar.png')}
+                                            source={dataUser.imgURL ? { uri: dataUser.imgURL } : assets.photo.img_5}
                                         />
                                     </View>
                                 </LinearGradient>

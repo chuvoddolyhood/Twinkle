@@ -13,6 +13,7 @@ const HomeScreen = () => {
     const { user, logOut } = useContext(AuthContext)
 
     const [dataPosting, setDataPosting] = useState([])
+    const [dataUser, setDataUser] = useState([])
     const [loading, setLoading] = useState(true)
 
     const fetchPosts = async () => {
@@ -39,8 +40,23 @@ const HomeScreen = () => {
         }
     }
 
+    const fetchUser = async () => {
+        try {
+            await firestore().collection('users').where('userId', '==', user.uid).get().then(querySnapshot => {
+                querySnapshot.forEach(documentSnapshot => {
+                    // console.log(documentSnapshot.data());
+                    setDataUser(documentSnapshot.data())
+                });
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
         fetchPosts()
+        fetchUser()
+
         setLoading(false)
     }, [])
 
@@ -50,21 +66,23 @@ const HomeScreen = () => {
         fetchPosts()
     }, [isFocused])
 
+    console.log('dataUser', dataUser);
+
 
     return (
         <LinearGradient colors={[`${colors.secondColor}`, `${colors.thirdColor}`]} style={styles.container}>
             {loading ? <ActivityIndicator size='large' color={colors.primaryColor} animating /> :
                 <View>
-                    {dataPosting ?
-                        <View style={{ alignItems: 'center', justifyContent: 'center', height: theme.dimension.windowHeight / 1.5 }}>
-                            <Text>No posts yet.</Text>
-                        </View> :
+                    {dataPosting.length !== 0 ?
                         <FlatList
                             data={dataPosting}
-                            renderItem={({ item }) => <Card items={item} />}
+                            renderItem={({ item }) => <Card items={item} user={dataUser} />}
                             keyExtractor={item => item.id}
                             showsVerticalScrollIndicator={false}
-                        />}
+                        /> :
+                        <View style={{ alignItems: 'center', justifyContent: 'center', height: theme.dimension.windowHeight / 1.5 }}>
+                            <Text>No posts yet.</Text>
+                        </View>}
                 </View>
             }
         </LinearGradient>

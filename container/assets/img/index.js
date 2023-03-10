@@ -15,6 +15,7 @@ const assets = {
         img_2: require('./beauty_1668910746321.jpg'),
         img_3: require('./anhthe.png'),
         img_4: require('./empty.jpg'),
+        img_5: require('./blankAvatar.png'),
     }
 };
 export default assets;
