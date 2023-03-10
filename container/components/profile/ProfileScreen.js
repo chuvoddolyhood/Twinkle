@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useRef } from 'react'
 import { AuthContext } from '../routes/AuthProvider'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faEllipsis, faTableCells, faTableList } from '@fortawesome/free-solid-svg-icons'
@@ -11,6 +11,8 @@ import Gallery from './Gallery'
 import PhotoPreview from './PhotoPreview'
 import { useNavigation } from '@react-navigation/native';
 import { useIsFocused } from '@react-navigation/native'
+import Animated from 'react-native-reanimated'
+import Button from '../auth/Button'
 
 
 const ProfileScreen = () => {
@@ -81,6 +83,28 @@ const ProfileScreen = () => {
         fetchUser()
     }, [isFocused])
 
+    // //Animation
+    // const fadeAnim = useRef(new Animated.Value(0)).current;
+
+    // const fadeIn = () => {
+    //     // Will change fadeAnim value to 1 in 5 seconds
+    //     Animated.timing(fadeAnim, {
+    //         toValue: 1,
+    //         duration: 5000,
+    //         useNativeDriver: true,
+    //     }).start();
+    // };
+
+    // const fadeOut = () => {
+    //     // Will change fadeAnim value to 0 in 3 seconds
+    //     Animated.timing(fadeAnim, {
+    //         toValue: 0,
+    //         duration: 3000,
+    //         useNativeDriver: true,
+    //     }).start();
+    // };
+
+
     return (
         <LinearGradient colors={[`${colors.secondColor}`, `${colors.thirdColor}`]} style={styles.container}>
             <View style={styles.header}>
@@ -101,31 +125,32 @@ const ProfileScreen = () => {
                                 {dataUser.nickname ? <Text style={styles.nickname}>@{dataUser.nickname}</Text> : <Text style={styles.nickname}>@your-nickname</Text>}
                                 <Text style={styles.name}>{dataUser.name}</Text>
                             </View>
-                            <LinearGradient
-                                colors={[`${colors.heartColor}`, `${colors.chooseBlue}`]}
-                                style={{
-                                    padding: 2,
-                                    borderRadius: 29,
-                                }}
-                            >
-                                <View
+                            <TouchableOpacity onPress={() => setShow(true)}>
+                                <LinearGradient
+                                    colors={[`${colors.heartColor}`, `${colors.chooseBlue}`]}
                                     style={{
-                                        padding: 3,
-                                        borderRadius: 27,
-                                        backgroundColor: colors.secondColor
-                                    }}>
-                                    <Image
+                                        padding: 2,
+                                        borderRadius: 29,
+                                    }}
+                                >
+                                    <View
                                         style={{
-                                            width: 80,
-                                            height: 80,
-                                            borderRadius: 25,
-                                            resizeMode: 'cover',
-                                        }}
-                                        source={dataUser.imgURL ? { uri: dataUser.imgURL } : require('./../../assets/img/blankAvatar.png')}
-                                    />
-                                </View>
-                            </LinearGradient>
-
+                                            padding: 3,
+                                            borderRadius: 27,
+                                            backgroundColor: colors.secondColor
+                                        }}>
+                                        <Image
+                                            style={{
+                                                width: 80,
+                                                height: 80,
+                                                borderRadius: 25,
+                                                resizeMode: 'cover',
+                                            }}
+                                            source={dataUser.imgURL ? { uri: dataUser.imgURL } : require('./../../assets/img/blankAvatar.png')}
+                                        />
+                                    </View>
+                                </LinearGradient>
+                            </TouchableOpacity>
                         </View>
 
                         <View style={styles.aboutMeArea}>
@@ -190,6 +215,57 @@ const ProfileScreen = () => {
             </View>
 
             {visible ? <PhotoPreview photo={photo} /> : null}
+
+            {/* <Animated.View
+                style={[
+                    {
+                        padding: 20,
+                        backgroundColor: 'powderblue',
+                    },
+                    {
+                        // Bind opacity to animated value
+                        opacity: fadeAnim,
+                    },
+                ]}>
+                <Text style={{
+                    fontSize: 28,
+                }}>Fading View!</Text>
+            </Animated.View>
+            <View style={{
+                flexBasis: 100,
+                justifyContent: 'space-evenly',
+                marginVertical: 16,
+            }}>
+                <Button title="Fade In View" onPress={fadeIn} />
+                <Button title="Fade Out View" onPress={fadeOut} />
+            </View> */}
+
+            {/* <Animated.View style={[{
+                backgroundColor: colors.whiteColor,
+                position: 'absolute',
+                left: 0,
+                height: theme.dimension.windowHeight / 2,
+                width: '100%',
+                borderTopLeftRadius: 50,
+                borderTopRightRadius: 50,
+                alignItems: 'center',
+                zIndex: 100,
+                elevation: 10,
+                shadowColor: colors.blackColor,
+                shadowOffset: {
+                    height: -200,
+                    width: 10
+                },
+                shadowOpacity: 0.54,
+                shadowRadius: 40
+            }, { bottom: bottom, }]}>
+                <View>
+                    <Text>Edit profile</Text>
+                </View>
+                <Button title="close" onPress={() => setShow(false)} />
+            </Animated.View> */}
+
+
         </LinearGradient>
     )
 }
