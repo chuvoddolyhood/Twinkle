@@ -4,4 +4,6 @@ import takePhotoFromCamera from "./takePhotoFromCamera";
 
 import CardSkeleton from "./CardSkeleton";
 
-export { choosePhotoFromLibrary, takePhotoFromCamera, CardSkeleton }
+import SearchInput from "./SearchInput";
+
+export { choosePhotoFromLibrary, takePhotoFromCamera, CardSkeleton, SearchInput }

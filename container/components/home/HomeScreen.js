@@ -66,7 +66,7 @@ const HomeScreen = () => {
         fetchPosts()
     }, [isFocused])
 
-    console.log('dataUser', dataUser);
+    // console.log('dataUser', dataUser);
 
 
     return (
