@@ -80,7 +80,7 @@ const ProfileScreen = () => {
 
     const isFocused = useIsFocused()
     useEffect(() => {
-        fetchPosts()
+        // fetchPosts()
         fetchUser()
     }, [isFocused])
 

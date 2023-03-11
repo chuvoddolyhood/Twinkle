@@ -10,13 +10,13 @@ import assets from '../../assets/img';
 
 const Card = (props) => {
     const { id, caption, comments, likes, postImg, postTime, userId } = props.items
-    const { imgURL, name, nickname } = props.user
 
     const { user, logOut } = useContext(AuthContext)
 
     const [loading, setLoading] = useState(false)
     const [height, setHeight] = useState(0);
     const [options, setOptions] = useState(false)
+    const [dataUser, setDataUser] = useState([])
 
     useEffect(() => {
         if (postImg) {
@@ -53,6 +53,24 @@ const Card = (props) => {
         }
     }
 
+    const fetchUser = async () => {
+        try {
+            await firestore().collection('users').where('userId', '==', userId).get().then(querySnapshot => {
+                querySnapshot.forEach(documentSnapshot => {
+                    // console.log(documentSnapshot.data());
+                    setDataUser(documentSnapshot.data())
+                });
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        fetchUser()
+        // setLoading(false)
+    }, [])
+
     return (
         <View style={styles.cardContainer}>
             <View style={styles.header}>
@@ -65,10 +83,10 @@ const Card = (props) => {
                             resizeMode: 'cover',
                             marginRight: 10
                         }}
-                        source={imgURL ? { uri: imgURL } : assets.photo.img_5}
+                        source={dataUser.imgURL ? { uri: dataUser.imgURL } : assets.photo.img_5}
                     />
                     <View style={styles.containerAllText}>
-                        <Text style={styles.textName}>{nickname ? nickname : name}</Text>
+                        <Text style={styles.textName}>{dataUser.nickname ? dataUser.nickname : dataUser.name}</Text>
                         <View style={styles.containerNameLocation}>
                             <View style={styles.containerLocationTime}>
                                 <FontAwesomeIcon icon={faLocationDot} size={12} color={colors.iconColor} />
