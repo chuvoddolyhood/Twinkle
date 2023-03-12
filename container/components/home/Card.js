@@ -13,16 +13,21 @@ const Card = (props) => {
 
     const { user, logOut } = useContext(AuthContext)
 
+    const [loadingImage, setLoadingImage] = useState(false)
     const [loading, setLoading] = useState(false)
     const [height, setHeight] = useState(0);
     const [options, setOptions] = useState(false)
     const [dataUser, setDataUser] = useState([])
+    const [currentUserLike, setCurrentUserLike] = useState(0) //check current user liked
+    const [amountLike, setAmountLike] = useState(0) //check amount of post's like
+    const [statusLike, setStatusLike] = useState(undefined) //status of like
+    const [idLike, setIdLike] = useState('') //id doc's like on firestore
 
     useEffect(() => {
         if (postImg) {
             Image.getSize(postImg, (width, height) => {
                 setHeight(height);
-                setLoading(true)
+                setLoadingImage(true)
             }, (errorMsg) => {
                 console.log(errorMsg);
             });
@@ -36,7 +41,7 @@ const Card = (props) => {
                     status: 0,
                 })
                 .then(() => {
-                    setLoading(true)
+                    setLoadingImage(true)
                     props.reRender(true);
                     console.log('Updated!');
                 });
@@ -66,10 +71,90 @@ const Card = (props) => {
         }
     }
 
+    // console.log(id, currentUserLike, amountLike, statusLike);
+
+    const fetchLike = async () => {
+        try {
+            //check user liked
+            await firestore()
+                .collection('posts')
+                .doc(id)
+                .collection('likes')
+                .where('userId', '==', user.uid)
+                .get()
+                .then(querySnapshot => {
+                    setCurrentUserLike(querySnapshot.size)
+                    setStatusLike(querySnapshot.size === 1 ? true : false)
+                    querySnapshot.forEach(documentSnapshot => {
+                        setIdLike(documentSnapshot.id);
+                    });
+                });
+
+            //Count amount of like per posts
+            await firestore()
+                .collection('posts')
+                .doc(id)
+                .collection('likes')
+                .get()
+                .then(querySnapshot => {
+                    setAmountLike(querySnapshot.size)
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
         fetchUser()
-        // setLoading(false)
+        fetchLike()
+
     }, [])
+
+    const addLike = async () => {
+        try {
+            await firestore()
+                .collection('posts')
+                .doc(id)
+                .collection('likes')
+                .add({
+                    userId: user.uid,
+                })
+                .then(() => {
+                    console.log('Liked!');
+                });
+
+            fetchLike()
+        } catch (error) {
+            console.log('Something went wrong with added user to firestore: ', error);
+        }
+    }
+
+    const removeLike = async () => {
+        try {
+            await firestore()
+                .collection('posts')
+                .doc(id)
+                .collection('likes')
+                .doc(idLike)
+                .delete()
+                .then(() => {
+                    console.log('Disliked!');
+                });
+
+            fetchLike()
+        } catch (error) {
+            console.log('Something went wrong with added user to firestore: ', error);
+        }
+    }
+
+    const like = () => {
+        if (currentUserLike === 1) {
+            removeLike()
+        } else {
+            addLike()
+        }
+        setStatusLike(!statusLike)
+    }
 
     return (
         <View style={styles.cardContainer}>
@@ -101,7 +186,7 @@ const Card = (props) => {
             </View>
             <View style={styles.body}>
                 <Text style={styles.caption}>{caption}</Text>
-                {loading &&
+                {loadingImage &&
                     <TouchableOpacity
                         onLongPress={showModal}
                     >
@@ -147,10 +232,12 @@ const Card = (props) => {
                 </View>
             </Modal>
             <View style={styles.footer}>
-                <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundHeart, }]}>
-                    <FontAwesomeIcon icon={faHeart} size={20} color={true ? colors.heartColor : colors.textColor} style={styles.iconFunc} />
-                    <Text style={styles.textFunc}>211</Text>
-                </View>
+                <TouchableOpacity onPress={like}>
+                    <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundHeart, }]}>
+                        <FontAwesomeIcon icon={faHeart} size={20} color={statusLike ? colors.heartColor : colors.textColor} style={styles.iconFunc} />
+                        <Text style={styles.textFunc}>{amountLike}</Text>
+                    </View>
+                </TouchableOpacity>
                 <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundComment, }]}>
                     <FontAwesomeIcon icon={faComment} size={20} color={colors.commentColor} style={styles.iconFunc} />
                     <Text style={styles.textFunc}>150</Text>

@@ -19,22 +19,25 @@ const HomeScreen = () => {
     const fetchPosts = async () => {
         const list = [];
         try {
-            await firestore().collection('posts').where('status', '==', 1).orderBy('postTime', 'desc').get().then(querySnapshot => {
-                // console.log('Total users: ', querySnapshot.size);
+            await firestore()
+                .collection('posts')
+                .where('status', '==', 1)
+                .orderBy('postTime', 'desc')
+                .get()
+                .then(querySnapshot => {
+                    // console.log('Total users: ', querySnapshot.size);
 
-                querySnapshot.forEach(documentSnapshot => {
-                    // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
-                    // const { caption, comments, likes, postImg, postTime, userId } = documentSnapshot.data()
+                    querySnapshot.forEach(documentSnapshot => {
+                        // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+                        // const { caption, comments, likes, postImg, postTime, userId } = documentSnapshot.data()
 
-                    list.push({
-                        id: documentSnapshot.id,
-                        ...documentSnapshot.data()
-                    })
-
-                    setDataPosting(list)
-
-                });
-            })
+                        list.push({
+                            id: documentSnapshot.id,
+                            ...documentSnapshot.data()
+                        })
+                    });
+                })
+            setDataPosting(list)
         } catch (error) {
             console.log(error);
         }
@@ -57,7 +60,9 @@ const HomeScreen = () => {
         fetchPosts()
         fetchUser()
 
-        setLoading(false)
+        if (dataPosting || dataUser) {
+            setLoading(false)
+        }
     }, [])
 
     //Nhan biet sau khi navigate ve home screen thi se re-render app
