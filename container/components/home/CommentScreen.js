@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, useWindowDimensions, TouchableWithoutFeedback, FlatList, ActivityIndicator } from 'react-native'
-import React, { forwardRef, useCallback, useImperativeHandle, useEffect, useState } from 'react'
+import React, { forwardRef, useCallback, useImperativeHandle, useEffect, useState, useContext } from 'react'
 import colors from '../../assets/colors'
 import Animated, { interpolate, useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import { PanGestureHandler } from 'react-native-gesture-handler'
@@ -7,10 +7,15 @@ import CardComment from '../expanse/CardComment'
 import { SearchInput } from '../expanse'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import firestore from '@react-native-firebase/firestore';
+import { AuthContext } from '../routes/AuthProvider'
 
 const CommentScreen = forwardRef(({ activeHeight }, ref) => {
+    const { user } = useContext(AuthContext)
+
     const [idPost, setIdPost] = useState('')
     const [dataComment, setDataComment] = useState([])
+    const [amountComment, setAmountComment] = useState(0) //check amount of post's like
+    const [txtComment, setTxtComment] = useState('')
 
     const height = useWindowDimensions().height
     //initial value
@@ -34,6 +39,7 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
     const closeComment = useCallback(() => {
         setIdPost('')
         setDataComment([])
+        setAmountComment(0)
 
         'worklet';
         topAnimation.value = withSpring(height, {
@@ -63,7 +69,7 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
 
     const gesture = useAnimatedGestureHandler({
         onStart: (_, ctx) => {
-            console.log(topAnimation.value);
+            // console.log(topAnimation.value);
             ctx.startY = topAnimation.value
         },
         onActive: (event, ctx) => {
@@ -80,7 +86,7 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
             // }
         },
         onEnd: () => {
-            console.log(topAnimation.value, activeHeight + 50, height / 3);
+            // console.log(topAnimation.value, activeHeight + 50, height / 3);
             //close
             if (topAnimation.value > activeHeight) {
                 topAnimation.value = withSpring(height, {
@@ -115,6 +121,7 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
                 .collection('posts')
                 .doc(idPost)
                 .collection('comments')
+                .orderBy('createdAt', 'asc')
                 .get()
                 .then(querySnapshot => {
                     querySnapshot.forEach(documentSnapshot => {
@@ -127,15 +134,15 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
             setDataComment(list)
 
 
-            //Count amount of like per posts
-            // await firestore()
-            //     .collection('posts')
-            //     .doc(id)
-            //     .collection('likes')
-            //     .get()
-            //     .then(querySnapshot => {
-            //         setAmountLike(querySnapshot.size)
-            //     });
+            //Count amount of comment per posts
+            await firestore()
+                .collection('posts')
+                .doc(idPost)
+                .collection('comments')
+                .get()
+                .then(querySnapshot => {
+                    setAmountComment(querySnapshot.size)
+                });
         } catch (error) {
             console.log(error);
         }
@@ -149,6 +156,32 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
 
     // console.log(dataComment);
 
+    const addComment = (text) => {
+        setTxtComment(text)
+    }
+
+    const pushComment = async () => {
+        try {
+            await firestore()
+                .collection('posts')
+                .doc(idPost)
+                .collection('comments')
+                .add({
+                    userId: user.uid,
+                    content: txtComment,
+                    createdAt: firestore.Timestamp.fromDate(new Date()),
+                })
+                .then(() => {
+                    console.log('commented!');
+                });
+
+            fetchComment()
+            setTxtComment('')
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <>
             <TouchableWithoutFeedback onPress={closeComment}>
@@ -160,7 +193,7 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
                         <View style={styles.line} />
                     </View>
                     <View style={styles.frameContainer}>
-                        <Text style={styles.amtCmt}>100 comments</Text>
+                        <Text style={styles.amtCmt}>{amountComment > 1 ? amountComment + ` comments` : amountComment + ` comment`} </Text>
                         {dataComment.length !== 0 ?
                             <FlatList
                                 data={dataComment}
@@ -171,7 +204,13 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
                             /> :
                             <ActivityIndicator size='large' color={colors.blackColor} animating />}
                         <View style={styles.commentBox}>
-                            <SearchInput title={'comment here'} icon={faPaperPlane} />
+                            <SearchInput
+                                title={'comment here'}
+                                icon={faPaperPlane}
+                                onChangeText={addComment}
+                                onPress={pushComment}
+                                value={txtComment}
+                            />
                         </View>
                     </View>
                 </Animated.View>

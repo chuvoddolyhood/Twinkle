@@ -1,20 +1,29 @@
-import { StyleSheet, Text, View, TextInput } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import colors from '../../assets/colors'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 
-const SearchInput = ({ title, icon, onChangeText }) => {
+const SearchInput = ({ title, icon, onChangeText, onPress, value }) => {
+
+  const onHandle = () => {
+    onPress();
+    Keyboard.dismiss();
+  }
+
   return (
     <View style={styles.container}>
       <TextInput
         placeholder={title}
         style={styles.textInput}
         onChangeText={text => onChangeText(text)}
+        value={value}
       />
-      <View style={styles.containerIcon}>
-        <FontAwesomeIcon icon={icon} size={22} color={colors.iconColor} />
-      </View>
-    </View>
+      <TouchableOpacity onPress={onHandle}>
+        <View style={styles.containerIcon}>
+          <FontAwesomeIcon icon={icon} size={22} color={colors.iconColor} />
+        </View>
+      </TouchableOpacity>
+    </View >
   )
 }
 
