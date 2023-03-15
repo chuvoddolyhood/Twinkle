@@ -1,5 +1,5 @@
-import { StyleSheet, FlatList, ActivityIndicator, View, Text } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import { StyleSheet, FlatList, ActivityIndicator, View, Text, useWindowDimensions } from 'react-native'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 import { AuthContext } from '../routes/AuthProvider'
 import colors from '../../assets/colors'
@@ -8,6 +8,8 @@ import Card from './Card'
 import firestore from '@react-native-firebase/firestore';
 import { useIsFocused } from '@react-navigation/native'
 import theme from '../../assets/theme/theme'
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import CommentScreen from './CommentScreen';
 
 const HomeScreen = () => {
     const { user, logOut } = useContext(AuthContext)
@@ -15,6 +17,10 @@ const HomeScreen = () => {
     const [dataPosting, setDataPosting] = useState([])
     const [dataUser, setDataUser] = useState([])
     const [loading, setLoading] = useState(true)
+
+    //BottomSheet
+    const height = useWindowDimensions().height
+    const bottomSheet = useRef(null)
 
     const fetchPosts = async () => {
         const list = [];
@@ -73,24 +79,32 @@ const HomeScreen = () => {
 
     // console.log('dataUser', dataUser);
 
+    const open = useCallback(() => {
+        bottomSheet.current.openComment();
+    }, [])
 
     return (
-        <LinearGradient colors={[`${colors.secondColor}`, `${colors.thirdColor}`]} style={styles.container}>
-            {loading ? <ActivityIndicator size='large' color={colors.primaryColor} animating /> :
-                <View>
-                    {dataPosting.length !== 0 ?
-                        <FlatList
-                            data={dataPosting}
-                            renderItem={({ item }) => <Card items={item} user={dataUser} />}
-                            keyExtractor={item => item.id}
-                            showsVerticalScrollIndicator={false}
-                        /> :
-                        <View style={{ alignItems: 'center', justifyContent: 'center', height: theme.dimension.windowHeight / 1.5 }}>
-                            <Text>No posts yet.</Text>
-                        </View>}
-                </View>
-            }
-        </LinearGradient>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <LinearGradient colors={[`${colors.secondColor}`, `${colors.thirdColor}`]} style={styles.container}>
+
+                {loading ? <ActivityIndicator size='large' color={colors.primaryColor} animating /> :
+                    <>
+                        {dataPosting.length !== 0 ?
+                            <FlatList
+                                data={dataPosting}
+                                renderItem={({ item }) => <Card items={item} user={dataUser} openComment={open} />}
+                                keyExtractor={item => item.id}
+                                showsVerticalScrollIndicator={false}
+                            /> :
+                            <View style={{ alignItems: 'center', justifyContent: 'center', height: theme.dimension.windowHeight / 1.5 }}>
+                                <Text>No posts yet.</Text>
+                            </View>}
+                    </>
+                }
+
+            </LinearGradient>
+            <CommentScreen activeHeight={height * 0.3} ref={bottomSheet} />
+        </GestureHandlerRootView>
     )
 }
 

@@ -11,6 +11,8 @@ import assets from '../../assets/img';
 const Card = (props) => {
     const { id, caption, comments, likes, postImg, postTime, userId } = props.items
 
+    const { openComment } = props
+
     const { user, logOut } = useContext(AuthContext)
 
     const [loadingImage, setLoadingImage] = useState(false)
@@ -238,10 +240,12 @@ const Card = (props) => {
                         <Text style={styles.textFunc}>{amountLike}</Text>
                     </View>
                 </TouchableOpacity>
-                <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundComment, }]}>
-                    <FontAwesomeIcon icon={faComment} size={20} color={colors.commentColor} style={styles.iconFunc} />
-                    <Text style={styles.textFunc}>150</Text>
-                </View>
+                <TouchableOpacity onPress={openComment}>
+                    <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundComment, }]}>
+                        <FontAwesomeIcon icon={faComment} size={20} color={colors.commentColor} style={styles.iconFunc} />
+                        <Text style={styles.textFunc}>150</Text>
+                    </View>
+                </TouchableOpacity>
             </View>
         </View>
     )
