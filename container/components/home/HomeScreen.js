@@ -1,7 +1,6 @@
 import { StyleSheet, FlatList, ActivityIndicator, View, Text, useWindowDimensions } from 'react-native'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
-import { AuthContext } from '../routes/AuthProvider'
 import colors from '../../assets/colors'
 import LinearGradient from 'react-native-linear-gradient'
 import Card from './Card'
@@ -12,15 +11,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CommentScreen from './CommentScreen';
 
 const HomeScreen = () => {
-    const { user, logOut } = useContext(AuthContext)
-
     const [dataPosting, setDataPosting] = useState([])
-    const [dataUser, setDataUser] = useState([])
     const [loading, setLoading] = useState(true)
-
-    //BottomSheet
-    const height = useWindowDimensions().height
-    const bottomSheet = useRef(null)
 
     const fetchPosts = async () => {
         const list = [];
@@ -49,24 +41,10 @@ const HomeScreen = () => {
         }
     }
 
-    const fetchUser = async () => {
-        try {
-            await firestore().collection('users').where('userId', '==', user.uid).get().then(querySnapshot => {
-                querySnapshot.forEach(documentSnapshot => {
-                    // console.log(documentSnapshot.data());
-                    setDataUser(documentSnapshot.data())
-                });
-            });
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
     useEffect(() => {
         fetchPosts()
-        fetchUser()
 
-        if (dataPosting || dataUser) {
+        if (dataPosting) {
             setLoading(false)
         }
     }, [])
@@ -77,22 +55,22 @@ const HomeScreen = () => {
         fetchPosts()
     }, [isFocused])
 
-    // console.log('dataUser', dataUser);
-
-    const open = useCallback(() => {
-        bottomSheet.current.openComment();
+    //BottomSheet
+    const height = useWindowDimensions().height
+    const bottomSheet = useRef(null)
+    const open = useCallback((index) => {
+        bottomSheet.current.openComment(index);
     }, [])
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <LinearGradient colors={[`${colors.secondColor}`, `${colors.thirdColor}`]} style={styles.container}>
-
                 {loading ? <ActivityIndicator size='large' color={colors.primaryColor} animating /> :
                     <>
                         {dataPosting.length !== 0 ?
                             <FlatList
                                 data={dataPosting}
-                                renderItem={({ item }) => <Card items={item} user={dataUser} openComment={open} />}
+                                renderItem={({ item }) => <Card items={item} openComment={open} />}
                                 keyExtractor={item => item.id}
                                 showsVerticalScrollIndicator={false}
                             /> :
@@ -103,7 +81,10 @@ const HomeScreen = () => {
                 }
 
             </LinearGradient>
-            <CommentScreen activeHeight={height * 0.3} ref={bottomSheet} />
+            <CommentScreen
+                activeHeight={height * 0.3}
+                ref={bottomSheet}
+            />
         </GestureHandlerRootView>
     )
 }

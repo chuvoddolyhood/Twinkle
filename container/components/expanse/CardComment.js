@@ -1,9 +1,36 @@
 import { StyleSheet, Text, View, Image } from 'react-native'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import assets from '../../assets/img'
 import colors from '../../assets/colors'
+import firestore from '@react-native-firebase/firestore';
 
-const CardComment = () => {
+const CardComment = (props) => {
+    const { content, userId } = props.items
+    const [dataUser, setDataUser] = useState([])
+
+    const fetchUser = async () => {
+        try {
+            await firestore()
+                .collection('users')
+                .where('userId', '==', userId)
+                .get()
+                .then(querySnapshot => {
+                    querySnapshot.forEach(documentSnapshot => {
+                        setDataUser(documentSnapshot.data())
+                    });
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        fetchUser()
+    }, [])
+
+    // console.log(dataUser);
+
+
     return (
         <View style={styles.container}>
             <Image
@@ -17,8 +44,8 @@ const CardComment = () => {
                 source={assets.photo.img_5}
             />
             <View>
-                <Text style={styles.name}>chuvod.dolyhood</Text>
-                <Text style={styles.content}>sadgasfgdafhadghsfgdjh</Text>
+                <Text style={styles.name}>{dataUser.name}</Text>
+                <Text style={styles.content}>{content}</Text>
             </View>
         </View>
     )

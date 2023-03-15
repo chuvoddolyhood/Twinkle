@@ -158,6 +158,11 @@ const Card = (props) => {
         setStatusLike(!statusLike)
     }
 
+    const setIdPost = () => {
+        // console.log(id);
+        openComment(id)
+    }
+
     return (
         <View style={styles.cardContainer}>
             <View style={styles.header}>
@@ -240,7 +245,7 @@ const Card = (props) => {
                         <Text style={styles.textFunc}>{amountLike}</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={openComment}>
+                <TouchableOpacity onPress={setIdPost}>
                     <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundComment, }]}>
                         <FontAwesomeIcon icon={faComment} size={20} color={colors.commentColor} style={styles.iconFunc} />
                         <Text style={styles.textFunc}>150</Text>

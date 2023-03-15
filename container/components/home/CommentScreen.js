@@ -1,13 +1,17 @@
-import { StyleSheet, Text, View, useWindowDimensions, TouchableWithoutFeedback } from 'react-native'
-import React, { forwardRef, useCallback, useImperativeHandle } from 'react'
+import { StyleSheet, Text, View, useWindowDimensions, TouchableWithoutFeedback, FlatList, ActivityIndicator } from 'react-native'
+import React, { forwardRef, useCallback, useImperativeHandle, useEffect, useState } from 'react'
 import colors from '../../assets/colors'
 import Animated, { interpolate, useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import { PanGestureHandler } from 'react-native-gesture-handler'
 import CardComment from '../expanse/CardComment'
 import { SearchInput } from '../expanse'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
+import firestore from '@react-native-firebase/firestore';
 
 const CommentScreen = forwardRef(({ activeHeight }, ref) => {
+    const [idPost, setIdPost] = useState('')
+    const [dataComment, setDataComment] = useState([])
+
     const height = useWindowDimensions().height
     //initial value
     const topAnimation = useSharedValue(height)
@@ -17,7 +21,9 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
         return { top }
     })
 
-    const openComment = useCallback(() => {
+    const openComment = useCallback((index) => {
+        setIdPost(index);
+
         'worklet';
         topAnimation.value = withSpring(activeHeight, {
             damping: 40,
@@ -26,6 +32,9 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
     }, [])
 
     const closeComment = useCallback(() => {
+        setIdPost('')
+        setDataComment([])
+
         'worklet';
         topAnimation.value = withSpring(height, {
             damping: 40,
@@ -97,6 +106,49 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
         }
     })
 
+    //Fetch comment's data
+    const fetchComment = async () => {
+        list = [];
+        try {
+            //check list user commented
+            await firestore()
+                .collection('posts')
+                .doc(idPost)
+                .collection('comments')
+                .get()
+                .then(querySnapshot => {
+                    querySnapshot.forEach(documentSnapshot => {
+                        list.push({
+                            id: documentSnapshot.id,
+                            ...documentSnapshot.data()
+                        })
+                    });
+                });
+            setDataComment(list)
+
+
+            //Count amount of like per posts
+            // await firestore()
+            //     .collection('posts')
+            //     .doc(id)
+            //     .collection('likes')
+            //     .get()
+            //     .then(querySnapshot => {
+            //         setAmountLike(querySnapshot.size)
+            //     });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        // fetchUser()
+        fetchComment()
+
+    }, [idPost])
+
+    // console.log(dataComment);
+
     return (
         <>
             <TouchableWithoutFeedback onPress={closeComment}>
@@ -109,11 +161,15 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
                     </View>
                     <View style={styles.frameContainer}>
                         <Text style={styles.amtCmt}>100 comments</Text>
-                        <CardComment />
-                        <CardComment />
-                        <CardComment />
-                        <CardComment />
-                        <CardComment />
+                        {dataComment.length !== 0 ?
+                            <FlatList
+                                data={dataComment}
+                                renderItem={({ item }) => <CardComment items={item} />}
+                                keyExtractor={item => item.id}
+                                showsVerticalScrollIndicator={false}
+                                style={{ width: '100%' }}
+                            /> :
+                            <ActivityIndicator size='large' color={colors.blackColor} animating />}
                         <View style={styles.commentBox}>
                             <SearchInput title={'comment here'} icon={faPaperPlane} />
                         </View>
