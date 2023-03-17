@@ -197,12 +197,19 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
                         {dataComment.length !== 0 ?
                             <FlatList
                                 data={dataComment}
-                                renderItem={({ item }) => <CardComment items={item} />}
+                                renderItem={({ item }) =>
+                                    <CardComment
+                                        items={item}
+                                        idPost={idPost}
+                                        onHandle={fetchComment}
+                                    />}
                                 keyExtractor={item => item.id}
                                 showsVerticalScrollIndicator={false}
                                 style={{ width: '100%' }}
                             /> :
-                            <ActivityIndicator size='large' color={colors.blackColor} animating />}
+                            <View style={{ alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                                <Text>No posts yet.</Text>
+                            </View>}
                         <View style={styles.commentBox}>
                             <SearchInput
                                 title={'comment here'}
