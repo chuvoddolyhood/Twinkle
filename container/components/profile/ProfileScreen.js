@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useContext, useState, useEffect, useRef } from 'react'
+import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity, useWindowDimensions, Pressable } from 'react-native'
+import React, { useContext, useState, useEffect, useRef, useCallback } from 'react'
 import { AuthContext } from '../routes/AuthProvider'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faEllipsis, faTableCells, faTableList } from '@fortawesome/free-solid-svg-icons'
@@ -11,9 +11,8 @@ import Gallery from './Gallery'
 import PhotoPreview from './PhotoPreview'
 import { useNavigation } from '@react-navigation/native';
 import { useIsFocused } from '@react-navigation/native'
-import Animated from 'react-native-reanimated'
-import Button from '../auth/Button'
 import assets from '../../assets/img'
+import UpdateInforScreen from './UpdateInforScreen'
 
 
 const ProfileScreen = () => {
@@ -24,6 +23,7 @@ const ProfileScreen = () => {
     const [loading, setLoading] = useState(true)
     const [photo, setPhoto] = useState('');
     const [visible, setVisible] = useState(false);
+    const dataU = useRef(null)
 
     const navigation = useNavigation();
 
@@ -50,6 +50,7 @@ const ProfileScreen = () => {
                 querySnapshot.forEach(documentSnapshot => {
                     // console.log(documentSnapshot.data());
                     setDataUser(documentSnapshot.data())
+                    dataU.current = documentSnapshot.data()
                 });
             });
         } catch (error) {
@@ -84,190 +85,138 @@ const ProfileScreen = () => {
         fetchUser()
     }, [isFocused])
 
-    // //Animation
-    // const fadeAnim = useRef(new Animated.Value(0)).current;
+    //BottomSheet
+    const height = useWindowDimensions().height
+    const bottomSheet = useRef(null)
+    const open = useCallback(() => {
+        console.log('dataUser=======', dataU.current);
+        bottomSheet.current.openUpdateScr(dataU.current);
+    }, [])
 
-    // const fadeIn = () => {
-    //     // Will change fadeAnim value to 1 in 5 seconds
-    //     Animated.timing(fadeAnim, {
-    //         toValue: 1,
-    //         duration: 5000,
-    //         useNativeDriver: true,
-    //     }).start();
-    // };
-
-    // const fadeOut = () => {
-    //     // Will change fadeAnim value to 0 in 3 seconds
-    //     Animated.timing(fadeAnim, {
-    //         toValue: 0,
-    //         duration: 3000,
-    //         useNativeDriver: true,
-    //     }).start();
-    // };
+    // console.log(dataUser, dataU);
 
 
     return (
-        <LinearGradient colors={[`${colors.secondColor}`, `${colors.thirdColor}`]} style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.heading}>Profile</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
-                    <View style={styles.backgroundIcon}>
-                        <FontAwesomeIcon icon={faEllipsis} size={20} color={colors.primaryColor} />
-                    </View>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.scrollContainer}>
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                >
-                    <View style={styles.info}>
-                        <View style={styles.avatarArea}>
-                            <View style={styles.nameArea}>
-                                {dataUser.nickname ? <Text style={styles.nickname}>@{dataUser.nickname}</Text> : <Text style={styles.nickname}>@your-nickname</Text>}
-                                <Text style={styles.name}>{dataUser.name}</Text>
-                            </View>
-                            <TouchableOpacity onPress={() => setShow(true)}>
-                                <LinearGradient
-                                    colors={[`${colors.heartColor}`, `${colors.chooseBlue}`]}
-                                    style={{
-                                        padding: 2,
-                                        borderRadius: 29,
-                                    }}
-                                >
-                                    <View
-                                        style={{
-                                            padding: 3,
-                                            borderRadius: 27,
-                                            backgroundColor: colors.secondColor
-                                        }}>
-                                        <Image
-                                            style={{
-                                                width: 80,
-                                                height: 80,
-                                                borderRadius: 25,
-                                                resizeMode: 'cover',
-                                            }}
-                                            source={dataUser.imgURL ? { uri: dataUser.imgURL } : assets.photo.img_5}
-                                        />
-                                    </View>
-                                </LinearGradient>
-                            </TouchableOpacity>
+        <>
+            <LinearGradient colors={[`${colors.secondColor}`, `${colors.thirdColor}`]} style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.heading}>Profile</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
+                        <View style={styles.backgroundIcon}>
+                            <FontAwesomeIcon icon={faEllipsis} size={20} color={colors.primaryColor} />
                         </View>
-
-                        <View style={styles.aboutMeArea}>
-                            <Text style={styles.aboutMe}>About me</Text>
-                            {dataUser.bio ? <Text style={styles.aboutMeContent}>{dataUser.bio}</Text> : <Text style={styles.aboutMeContent}>Your Bio</Text>}
-                        </View>
-                    </View>
-
-                    <View style={styles.body}>
-                        <View style={styles.PFFContainer}>
-                            <View style={[styles.PFFBox, styles.PFFBox_choose]}>
-                                <Text style={styles.numberPFFBox}>52</Text>
-                                <Text style={styles.textPFFBox}>Post</Text>
-                            </View>
-                            <View style={styles.PFFBox}>
-                                <Text style={styles.numberPFFBox}>250</Text>
-                                <Text style={styles.textPFFBox}>Following</Text>
-                            </View>
-                            <View style={styles.PFFBox}>
-                                <Text style={styles.numberPFFBox}>4.5k</Text>
-                                <Text style={styles.textPFFBox}>Followers</Text>
-                            </View>
-                        </View>
-                        <View style={styles.headingArea}>
-                            <Text style={styles.headingPost}>My Posts</Text>
-                            <View style={styles.containerIconList}>
-                                <FontAwesomeIcon icon={faTableCells} size={22} color={colors.primaryColor} style={{ marginLeft: 10 }} />
-                                <FontAwesomeIcon icon={faTableList} size={22} color={colors.iconColor} style={{ marginLeft: 15 }} />
-                            </View>
-                        </View>
-                        {loading ? <ActivityIndicator size='large' color={colors.primaryColor} animating /> :
-                            <View>
-                                {dataPosting.length === 0 ?
-                                    <View style={{ height: theme.dimension.windowHeight * 2 / 3 }}>
-                                        <Text>No posts yet.</Text>
-                                    </View>
-                                    :
-                                    <View style={{
-                                        flexDirection: 'row',
-                                        flexWrap: 'wrap-reverse',
-                                        justifyContent: 'space-between',
-                                        marginVertical: 20,
-                                        height: theme.dimension.windowHeight * 2 / 3
-                                    }}>
-                                        {dataPosting.map((value, index) => {
-                                            return (
-                                                <Gallery
-                                                    key={index}
-                                                    items={value}
-                                                    onChoose={choosePhoto}
-                                                    onUnChoose={unChoosePhoto}
-                                                    onPress={() => { navigation.navigate('PostList') }}
-                                                />
-                                            )
-                                        })}
-                                    </View>
-                                }
-                            </View>
-                        }
-                    </View>
-                </ScrollView>
-            </View>
-
-            {visible ? <PhotoPreview photo={photo} /> : null}
-
-            {/* <Animated.View
-                style={[
-                    {
-                        padding: 20,
-                        backgroundColor: 'powderblue',
-                    },
-                    {
-                        // Bind opacity to animated value
-                        opacity: fadeAnim,
-                    },
-                ]}>
-                <Text style={{
-                    fontSize: 28,
-                }}>Fading View!</Text>
-            </Animated.View>
-            <View style={{
-                flexBasis: 100,
-                justifyContent: 'space-evenly',
-                marginVertical: 16,
-            }}>
-                <Button title="Fade In View" onPress={fadeIn} />
-                <Button title="Fade Out View" onPress={fadeOut} />
-            </View> */}
-
-            {/* <Animated.View style={[{
-                backgroundColor: colors.whiteColor,
-                position: 'absolute',
-                left: 0,
-                height: theme.dimension.windowHeight / 2,
-                width: '100%',
-                borderTopLeftRadius: 50,
-                borderTopRightRadius: 50,
-                alignItems: 'center',
-                zIndex: 100,
-                elevation: 10,
-                shadowColor: colors.blackColor,
-                shadowOffset: {
-                    height: -200,
-                    width: 10
-                },
-                shadowOpacity: 0.54,
-                shadowRadius: 40
-            }, { bottom: bottom, }]}>
-                <View>
-                    <Text>Edit profile</Text>
+                    </TouchableOpacity>
                 </View>
-                <Button title="close" onPress={() => setShow(false)} />
-            </Animated.View> */}
+                <View style={styles.scrollContainer}>
+                    <ScrollView
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <View style={styles.info}>
+                            <View style={styles.avatarArea}>
+                                <Pressable onPress={open}>
+                                    <View style={styles.nameArea}>
+                                        {dataUser.nickname ? <Text style={styles.nickname}>@{dataUser.nickname}</Text> : <Text style={styles.nickname}>@your-nickname</Text>}
+                                        <Text style={styles.name}>{dataUser.name}</Text>
+                                    </View>
+                                </Pressable>
+                                <TouchableOpacity onPress={() => { }}>
+                                    <LinearGradient
+                                        colors={[`${colors.heartColor}`, `${colors.chooseBlue}`]}
+                                        style={{
+                                            padding: 2,
+                                            borderRadius: 29,
+                                        }}
+                                    >
+                                        <View
+                                            style={{
+                                                padding: 3,
+                                                borderRadius: 27,
+                                                backgroundColor: colors.secondColor
+                                            }}>
+                                            <Image
+                                                style={{
+                                                    width: 80,
+                                                    height: 80,
+                                                    borderRadius: 25,
+                                                    resizeMode: 'cover',
+                                                }}
+                                                source={dataUser.imgURL ? { uri: dataUser.imgURL } : assets.photo.img_5}
+                                            />
+                                        </View>
+                                    </LinearGradient>
+                                </TouchableOpacity>
+                            </View>
 
+                            <View style={styles.aboutMeArea}>
+                                <Text style={styles.aboutMe}>About me</Text>
+                                {dataUser.bio ? <Text style={styles.aboutMeContent}>{dataUser.bio}</Text> : <Text style={styles.aboutMeContent}>Your Bio</Text>}
+                            </View>
+                        </View>
 
-        </LinearGradient>
+                        <View style={styles.body}>
+                            <View style={styles.PFFContainer}>
+                                <View style={[styles.PFFBox, styles.PFFBox_choose]}>
+                                    <Text style={styles.numberPFFBox}>52</Text>
+                                    <Text style={styles.textPFFBox}>Post</Text>
+                                </View>
+                                <View style={styles.PFFBox}>
+                                    <Text style={styles.numberPFFBox}>250</Text>
+                                    <Text style={styles.textPFFBox}>Following</Text>
+                                </View>
+                                <View style={styles.PFFBox}>
+                                    <Text style={styles.numberPFFBox}>4.5k</Text>
+                                    <Text style={styles.textPFFBox}>Followers</Text>
+                                </View>
+                            </View>
+                            <View style={styles.headingArea}>
+                                <Text style={styles.headingPost}>My Posts</Text>
+                                <View style={styles.containerIconList}>
+                                    <FontAwesomeIcon icon={faTableCells} size={22} color={colors.primaryColor} style={{ marginLeft: 10 }} />
+                                    <FontAwesomeIcon icon={faTableList} size={22} color={colors.iconColor} style={{ marginLeft: 15 }} />
+                                </View>
+                            </View>
+                            {loading ? <ActivityIndicator size='large' color={colors.primaryColor} animating /> :
+                                <View>
+                                    {dataPosting.length === 0 ?
+                                        <View style={{ height: theme.dimension.windowHeight * 2 / 3 }}>
+                                            <Text>No posts yet.</Text>
+                                        </View>
+                                        :
+                                        <View style={{
+                                            flexDirection: 'row',
+                                            flexWrap: 'wrap-reverse',
+                                            justifyContent: 'space-between',
+                                            marginVertical: 20,
+                                            height: theme.dimension.windowHeight * 2 / 3
+                                        }}>
+                                            {dataPosting.map((value, index) => {
+                                                return (
+                                                    <Gallery
+                                                        key={index}
+                                                        items={value}
+                                                        onChoose={choosePhoto}
+                                                        onUnChoose={unChoosePhoto}
+                                                        onPress={() => { navigation.navigate('PostList') }}
+                                                    />
+                                                )
+                                            })}
+                                        </View>
+                                    }
+                                </View>
+                            }
+                        </View>
+                    </ScrollView>
+                </View>
+
+                {visible ? <PhotoPreview photo={photo} /> : null}
+            </LinearGradient>
+
+            <UpdateInforScreen
+                activeHeight={height * 0.3}
+                onHandle={fetchUser}
+                ref={bottomSheet}
+            />
+        </>
     )
 }
 

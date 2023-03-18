@@ -21,7 +21,8 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         backgroundColor: colors.primaryColor,
         paddingVertical: 18,
-        borderRadius: 10
+        borderRadius: 10,
+        width: '96%' // Neu co loi thi xoa dong nay
     },
     text: {
         color: colors.whiteColor,

@@ -59,6 +59,7 @@ const HomeScreen = () => {
     const height = useWindowDimensions().height
     const bottomSheet = useRef(null)
     const open = useCallback((index) => {
+        //index la id cua idPost vi open la function dang duoc render theo tung item trong Flatlist
         bottomSheet.current.openComment(index);
     }, [])
 

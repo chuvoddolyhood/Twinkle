@@ -3,7 +3,7 @@ import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import colors from '../../assets/colors'
 
-export default function Input({ title, icon, isPassword, onChangeText }) {
+export default function Input({ title, icon, isPassword, onChangeText, value }) {
     return (
         <View style={InputStyle.container}>
             <View style={InputStyle.containerIcon}>
@@ -14,6 +14,7 @@ export default function Input({ title, icon, isPassword, onChangeText }) {
                 style={InputStyle.textInput}
                 secureTextEntry={isPassword}
                 onChangeText={text => onChangeText(text)}
+                value={value}
             />
         </View>
     )
