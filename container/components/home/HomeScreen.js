@@ -71,7 +71,7 @@ const HomeScreen = () => {
                         {dataPosting.length !== 0 ?
                             <FlatList
                                 data={dataPosting}
-                                renderItem={({ item }) => <Card items={item} openComment={open} />}
+                                renderItem={({ item }) => <Card items={item} openComment={open} onHandle={fetchPosts} />}
                                 keyExtractor={item => item.id}
                                 showsVerticalScrollIndicator={false}
                             /> :

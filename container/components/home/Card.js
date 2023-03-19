@@ -44,7 +44,7 @@ const Card = (props) => {
                 })
                 .then(() => {
                     setLoadingImage(true)
-                    props.reRender(true);
+                    props.onHandle();
                     console.log('Updated!');
                 });
             setOptions(false)
@@ -127,7 +127,7 @@ const Card = (props) => {
 
             fetchLike()
         } catch (error) {
-            console.log('Something went wrong with added user to firestore: ', error);
+            console.log('Something went wrong with added like to firestore: ', error);
         }
     }
 
@@ -145,15 +145,57 @@ const Card = (props) => {
 
             fetchLike()
         } catch (error) {
-            console.log('Something went wrong with added user to firestore: ', error);
+            console.log('Something went wrong with removed like to firestore: ', error);
+        }
+    }
+
+    //===============Notifications===============
+    const addNoti = async () => {
+        //20 ky tu
+        var idDoc = 'LIKE' + user.uid.substring(0, 8) + id.substring(0, 8)
+
+        try {
+            await firestore()
+                .collection('notifications')
+                .doc(userId)
+                .collection('noti')
+                .doc(idDoc)
+                .set({
+                    userId: user.uid,
+                    postId: id,
+                    createdAt: firestore.Timestamp.fromDate(new Date()),
+                    type: 'like'
+                });
+        } catch (error) {
+            console.log('Something went wrong with added noti to firestore: ', error);
+        }
+    }
+
+    const removeNoti = async () => {
+        var idDoc = 'LIKE' + user.uid.substring(0, 8) + id.substring(0, 8)
+
+        try {
+            await firestore()
+                .collection('notifications')
+                .doc(userId)
+                .collection('noti')
+                .doc(idDoc)
+                .delete()
+                .then(() => {
+                    console.log('Successfully deleted!', idDoc, 'abc');
+                })
+        } catch (error) {
+            console.log('Something went wrong with removed noti to firestore: ', error);
         }
     }
 
     const like = () => {
         if (currentUserLike === 1) {
-            removeLike()
+            removeLike();
+            removeNoti();
         } else {
-            addLike()
+            addLike();
+            addNoti();
         }
         setStatusLike(!statusLike)
     }
