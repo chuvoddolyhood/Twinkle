@@ -24,6 +24,7 @@ const Card = (props) => {
     const [amountLike, setAmountLike] = useState(0) //check amount of post's like
     const [statusLike, setStatusLike] = useState(undefined) //status of like
     const [idLike, setIdLike] = useState('') //id doc's like on firestore
+    const [amountComment, setAmountComment] = useState(0) //check amount of post's like
 
     useEffect(() => {
         if (postImg) {
@@ -109,6 +110,7 @@ const Card = (props) => {
     useEffect(() => {
         fetchUser()
         fetchLike()
+        fetchComment()
 
     }, [])
 
@@ -201,8 +203,25 @@ const Card = (props) => {
     }
 
     const setIdPost = () => {
-        // console.log(id);
-        openComment(id)
+        // console.log(userId);
+        openComment(id, userId)
+    }
+
+    const fetchComment = async () => {
+        list = [];
+        try {
+            //Count amount of comment per posts
+            await firestore()
+                .collection('posts')
+                .doc(id)
+                .collection('comments')
+                .get()
+                .then(querySnapshot => {
+                    setAmountComment(querySnapshot.size)
+                });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -290,7 +309,7 @@ const Card = (props) => {
                 <TouchableOpacity onPress={setIdPost}>
                     <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundComment, }]}>
                         <FontAwesomeIcon icon={faComment} size={20} color={colors.commentColor} style={styles.iconFunc} />
-                        <Text style={styles.textFunc}>150</Text>
+                        <Text style={styles.textFunc}>{amountComment}</Text>
                     </View>
                 </TouchableOpacity>
             </View>

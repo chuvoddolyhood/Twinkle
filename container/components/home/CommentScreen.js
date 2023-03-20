@@ -16,6 +16,7 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
     const [dataComment, setDataComment] = useState([])
     const [amountComment, setAmountComment] = useState(0) //check amount of post's like
     const [txtComment, setTxtComment] = useState('')
+    const [userIdPost, setUserIdPost] = useState('')
 
     const height = useWindowDimensions().height
     //initial value
@@ -26,8 +27,9 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
         return { top }
     })
 
-    const openComment = useCallback((index) => {
+    const openComment = useCallback((index, userIdPost) => {
         setIdPost(index);
+        setUserIdPost(userIdPost);
 
         'worklet';
         topAnimation.value = withSpring(activeHeight, {
@@ -175,10 +177,52 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
                     console.log('commented!');
                 });
 
+            addNoti_Comment()
             fetchComment()
             setTxtComment('')
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    //===============Notifications===============
+    const addNoti_Comment = async () => {
+        //20 ky tu
+        var idDoc = 'COMT' + user.uid.substring(0, 8) + idPost.substring(0, 8)
+
+        try {
+            await firestore()
+                .collection('notifications')
+                .doc(userIdPost)
+                .collection('noti')
+                .doc(idDoc)
+                .set({
+                    userId: user.uid,
+                    postId: idPost,
+                    createdAt: firestore.Timestamp.fromDate(new Date()),
+                    type: 'comment',
+                    content: txtComment,
+                });
+        } catch (error) {
+            console.log('Something went wrong with added noti to firestore: ', error);
+        }
+    }
+
+    const removeNoti_Comment = async () => {
+        var idDoc = 'COMT' + user.uid.substring(0, 8) + idPost.substring(0, 8)
+
+        try {
+            await firestore()
+                .collection('notifications')
+                .doc(userIdPost)
+                .collection('noti')
+                .doc(idDoc)
+                .delete()
+                .then(() => {
+                    console.log('Successfully deleted!', idDoc, 'abc');
+                })
+        } catch (error) {
+            console.log('Something went wrong with removed noti to firestore: ', error);
         }
     }
 
@@ -202,6 +246,7 @@ const CommentScreen = forwardRef(({ activeHeight }, ref) => {
                                         items={item}
                                         idPost={idPost}
                                         onHandle={fetchComment}
+                                        onDeleteNotiComt={removeNoti_Comment}
                                     />}
                                 keyExtractor={item => item.id}
                                 showsVerticalScrollIndicator={false}

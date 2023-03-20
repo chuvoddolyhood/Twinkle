@@ -9,7 +9,7 @@ const CardComment = (props) => {
     const { user } = useContext(AuthContext)
 
     const { id, content, userId } = props.items
-    const { idPost, onHandle } = props
+    const { idPost, onHandle, onDeleteNotiComt } = props
 
     const [dataUser, setDataUser] = useState([])
 
@@ -37,7 +37,12 @@ const CardComment = (props) => {
                     onPress: () => console.log('Cancel Pressed'),
                     style: 'cancel',
                 },
-                { text: 'OK', onPress: () => deleteCmt() },
+                {
+                    text: 'OK', onPress: () => {
+                        deleteCmt()
+                        onDeleteNotiComt()
+                    }
+                },
             ]);
         } else {
             alert("You can not delete this comment.")
