@@ -112,6 +112,9 @@ const Card = (props) => {
         fetchLike()
         fetchComment()
 
+        if (dataUser || currentUserLike || amountComment) {
+            setLoading(false)
+        }
     }, [])
 
     const addLike = async () => {
@@ -184,7 +187,7 @@ const Card = (props) => {
                 .doc(idDoc)
                 .delete()
                 .then(() => {
-                    console.log('Successfully deleted!', idDoc, 'abc');
+                    console.log('Successfully deleted!', idDoc);
                 })
         } catch (error) {
             console.log('Something went wrong with removed noti to firestore: ', error);
@@ -225,95 +228,97 @@ const Card = (props) => {
     }
 
     return (
-        <View style={styles.cardContainer}>
-            <View style={styles.header}>
-                <View style={styles.containerAvatarText}>
-                    <Image
-                        style={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: 14,
-                            resizeMode: 'cover',
-                            marginRight: 10
-                        }}
-                        source={dataUser.imgURL ? { uri: dataUser.imgURL } : assets.photo.img_5}
-                    />
-                    <View style={styles.containerAllText}>
-                        <Text style={styles.textName}>{dataUser.nickname ? dataUser.nickname : dataUser.name}</Text>
-                        <View style={styles.containerNameLocation}>
-                            <View style={styles.containerLocationTime}>
-                                <FontAwesomeIcon icon={faLocationDot} size={12} color={colors.iconColor} />
-                            </View>
-                            <Text style={styles.textLocationTime}>{'HCMC'}   •   {moment(postTime.toDate()).fromNow()}</Text>
-                        </View>
-                    </View>
-                </View>
-                <TouchableOpacity>
-                    <FontAwesomeIcon icon={faShare} size={20} color={colors.iconColor} />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.body}>
-                <Text style={styles.caption}>{caption}</Text>
-                {loadingImage &&
-                    <TouchableOpacity
-                        onLongPress={showModal}
-                    >
+        <>
+            {loading ? <Text>Loading...</Text> : <View style={styles.cardContainer}>
+                <View style={styles.header}>
+                    <View style={styles.containerAvatarText}>
                         <Image
-                            source={{ uri: postImg }}
-                            resizeMode='cover'
                             style={{
-                                width: '100%',
-                                height: height / 6,
-                                borderRadius: 15
+                                width: 40,
+                                height: 40,
+                                borderRadius: 14,
+                                resizeMode: 'cover',
+                                marginRight: 10
                             }}
+                            source={dataUser.imgURL ? { uri: dataUser.imgURL } : assets.photo.img_5}
                         />
-                    </TouchableOpacity>}
-            </View>
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={options}
-                animated
-                onRequestClose={() => {
-                    Alert.alert('Close.');
-                    setOptions(!options);
-                }}
-            >
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <View style={{ width: 200, height: 150, backgroundColor: colors.secondColor, borderRadius: 20, elevation: 8, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Delete photo</Text>
-                        <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', alignItems: 'center', width: '80%' }}>
-                            <TouchableOpacity
-                                style={[styles.containerImgFunc, { backgroundColor: colors.backgroundHeart, }]}
-                                onPress={deletePhoto}
-                            >
-                                <Text>OK</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.containerImgFunc, { backgroundColor: colors.backgroundIcon, }]}
-                                onPress={() => setOptions(false)}
-                            >
-                                <Text>Cancel</Text>
-                            </TouchableOpacity>
+                        <View style={styles.containerAllText}>
+                            <Text style={styles.textName}>{dataUser.nickname ? dataUser.nickname : dataUser.name}</Text>
+                            <View style={styles.containerNameLocation}>
+                                <View style={styles.containerLocationTime}>
+                                    <FontAwesomeIcon icon={faLocationDot} size={12} color={colors.iconColor} />
+                                </View>
+                                <Text style={styles.textLocationTime}>{'HCMC'}   •   {moment(postTime.toDate()).fromNow()}</Text>
+                            </View>
                         </View>
                     </View>
+                    <TouchableOpacity>
+                        <FontAwesomeIcon icon={faShare} size={20} color={colors.iconColor} />
+                    </TouchableOpacity>
                 </View>
-            </Modal>
-            <View style={styles.footer}>
-                <TouchableOpacity onPress={like}>
-                    <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundHeart, }]}>
-                        <FontAwesomeIcon icon={faHeart} size={20} color={statusLike ? colors.heartColor : colors.textColor} style={styles.iconFunc} />
-                        <Text style={styles.textFunc}>{amountLike}</Text>
+                <View style={styles.body}>
+                    <Text style={styles.caption}>{caption}</Text>
+                    {loadingImage &&
+                        <TouchableOpacity
+                            onLongPress={showModal}
+                        >
+                            <Image
+                                source={{ uri: postImg }}
+                                resizeMode='cover'
+                                style={{
+                                    width: '100%',
+                                    height: height / 6,
+                                    borderRadius: 15
+                                }}
+                            />
+                        </TouchableOpacity>}
+                </View>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={options}
+                    animated
+                    onRequestClose={() => {
+                        Alert.alert('Close.');
+                        setOptions(!options);
+                    }}
+                >
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ width: 200, height: 150, backgroundColor: colors.secondColor, borderRadius: 20, elevation: 8, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Delete photo</Text>
+                            <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', alignItems: 'center', width: '80%' }}>
+                                <TouchableOpacity
+                                    style={[styles.containerImgFunc, { backgroundColor: colors.backgroundHeart, }]}
+                                    onPress={deletePhoto}
+                                >
+                                    <Text>OK</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.containerImgFunc, { backgroundColor: colors.backgroundIcon, }]}
+                                    onPress={() => setOptions(false)}
+                                >
+                                    <Text>Cancel</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={setIdPost}>
-                    <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundComment, }]}>
-                        <FontAwesomeIcon icon={faComment} size={20} color={colors.commentColor} style={styles.iconFunc} />
-                        <Text style={styles.textFunc}>{amountComment}</Text>
-                    </View>
-                </TouchableOpacity>
-            </View>
-        </View>
+                </Modal>
+                <View style={styles.footer}>
+                    <TouchableOpacity onPress={like}>
+                        <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundHeart, }]}>
+                            <FontAwesomeIcon icon={faHeart} size={20} color={statusLike ? colors.heartColor : colors.textColor} style={styles.iconFunc} />
+                            <Text style={styles.textFunc}>{amountLike}</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={setIdPost}>
+                        <View style={[styles.containerImgFunc, { backgroundColor: colors.backgroundComment, }]}>
+                            <FontAwesomeIcon icon={faComment} size={20} color={colors.commentColor} style={styles.iconFunc} />
+                            <Text style={styles.textFunc}>{amountComment}</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            </View>}
+        </>
     )
 }
 

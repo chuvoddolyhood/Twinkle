@@ -10,6 +10,7 @@ import { Pressable } from "react-native";
 import SearchScreen from '../search/SearchScreen';
 import FeedStack from './Stack/FeedStack';
 import ProfileStack from './Stack/ProfileStack';
+import NotificationStack from './Stack/NotificationStack';
 
 /**
  * 
@@ -58,18 +59,6 @@ const MessageStack = ({ navigation }) => (
                         <FontAwesomeIcon icon={faCamera} size={20} color={colors.primaryColor} />
                     </Pressable>
                 )
-            }}
-        />
-    </Stack.Navigator>
-)
-
-const NotificationStack = ({ navigation }) => (
-    <Stack.Navigator>
-        <Stack.Screen
-            name="Notification"
-            component={NotificationScreen}
-            options={{
-                headerShown: false
             }}
         />
     </Stack.Navigator>

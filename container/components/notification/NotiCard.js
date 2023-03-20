@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import assets from '../../assets/img'
 import colors from '../../assets/colors'
@@ -6,6 +6,7 @@ import { faComment, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import moment from 'moment'
 import firestore from '@react-native-firebase/firestore';
+import { useNavigation } from '@react-navigation/native'
 
 const NotiCard = (props) => {
 
@@ -13,6 +14,8 @@ const NotiCard = (props) => {
 
     const [loading, setLoading] = useState(false)
     const [dataUser, setDataUser] = useState([])
+
+    const navigation = useNavigation();
 
     const fetchUser = async () => {
         try {
@@ -42,33 +45,35 @@ const NotiCard = (props) => {
     // console.log(dataUser);
 
     return (
-        <View style={styles.container}>
-            <View>
-                <Image
-                    style={{
-                        width: 45,
-                        height: 45,
-                        borderRadius: 14,
-                        resizeMode: 'cover',
-                        marginRight: 10
-                    }}
-                    source={dataUser.imgURL ? { uri: dataUser.imgURL } : assets.photo.img_5}
-                />
-                <View style={[styles.containerIcon, { backgroundColor: (type === 'like') ? colors.heartColor : colors.commentColor }]}>
-                    <FontAwesomeIcon icon={(type === 'like') ? faHeart : faComment} size={10} color={colors.whiteColor} />
+        <Pressable onPress={() => { navigation.navigate('ViewNoti', props) }}>
+            <View style={styles.container}>
+                <View>
+                    <Image
+                        style={{
+                            width: 45,
+                            height: 45,
+                            borderRadius: 14,
+                            resizeMode: 'cover',
+                            marginRight: 10
+                        }}
+                        source={dataUser.imgURL ? { uri: dataUser.imgURL } : assets.photo.img_5}
+                    />
+                    <View style={[styles.containerIcon, { backgroundColor: (type === 'like') ? colors.heartColor : colors.commentColor }]}>
+                        <FontAwesomeIcon icon={(type === 'like') ? faHeart : faComment} size={10} color={colors.whiteColor} />
+                    </View>
+                </View>
+                <View>
+                    <Text style={styles.time}>{moment(createdAt.toDate()).fromNow()}</Text>
+                    <Text style={styles.content}>{dataUser.name}
+                        {
+                            (type === 'like') ?
+                                ' liked your post'
+                                : ' commented on your post'
+                        }
+                    </Text>
                 </View>
             </View>
-            <View>
-                <Text style={styles.time}>{moment(createdAt.toDate()).fromNow()}</Text>
-                <Text style={styles.content}>{dataUser.name}
-                    {
-                        (type === 'like') ?
-                            ' liked your post'
-                            : ' commented on your post'
-                    }
-                </Text>
-            </View>
-        </View>
+        </Pressable >
     )
 }
 
