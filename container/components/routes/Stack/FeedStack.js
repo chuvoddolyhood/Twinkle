@@ -8,6 +8,7 @@ import { faCamera, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useNavigation } from '@react-navigation/native';
 import PostingScreen from '../../PostingScreen/PostingScreen';
 import { takePhotoFromCamera } from '../../expanse';
+import Map from '../../PostingScreen/Map';
 
 const FeedStack = () => {
     const Stack = createNativeStackNavigator();
@@ -63,6 +64,12 @@ const FeedStack = () => {
             <Stack.Screen
                 name="Posting"
                 component={PostingScreen}
+                options={{ headerShown: false }}
+            >
+            </Stack.Screen>
+            <Stack.Screen
+                name="Map"
+                component={Map}
                 options={{ headerShown: false }}
             >
             </Stack.Screen>

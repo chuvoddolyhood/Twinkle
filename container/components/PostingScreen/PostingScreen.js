@@ -165,7 +165,7 @@ const PostingScreen = () => {
                     <TouchableOpacity>
                         <FontAwesomeIcon icon={faTag} size={22} color={colors.tagIcon} style={{ marginRight: 20 }} />
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('Map', { city: 'HCMC' })}>
                         <FontAwesomeIcon icon={faMapMarkerAlt} size={22} color={colors.mapIcon} style={{ marginRight: 20 }} />
                     </TouchableOpacity>
                 </View>
